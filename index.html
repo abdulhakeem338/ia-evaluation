@@ -1,1197 +1,1227 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
-    <meta name="x-poe-datastore-behavior" content="local_only">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام تقييم المعايير - IIA 2025</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
 
-        * {
-            font-family: 'Cairo', sans-serif;
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>أداة التدقيق والتقييم</title>
+  
+  <style>
+    :root {
+      --primary-bg: #f8f9fa;
+      --secondary-bg: #ffffff;
+      --primary-text: #212529;
+      --secondary-text: #6c757d;
+      --border-color: #dee2e6;
+      --accent-color: #007bff;
+      --accent-hover: #0056b3;
+      --header-color: #f59e0b;
+      --green: #28a745;
+      --gold: #ffc107;
+      --red: #dc3545;
+      --grey: #6c757d;
+      --black: #212529;
+      --green-bg: #e9f5ec;
+      --gold-bg: #fff8e1;
+      --red-bg: #fbe9e7;
+      --grey-bg: #f1f3f5;
+    }
+
+    .dark-mode {
+      --primary-bg: #121212;
+      --secondary-bg: #1e1e1e;
+      --primary-text: #e0e0e0;
+      --secondary-text: #a0a0a0;
+      --border-color: #444444;
+      --accent-color: #3a9aed;
+      --accent-hover: #6cacff;
+      --green-bg: #1a3c23;
+      --gold-bg: #4d3800;
+      --red-bg: #4d1a1a;
+      --grey-bg: #3a3d40;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      background-color: var(--primary-bg);
+      color: var(--primary-text);
+      line-height: 1.6;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    
+    #root {
+        padding: 1rem;
+    }
+
+    .container {
+        max-width: 1800px;
+        margin: auto;
+        padding: 1rem;
+    }
+
+    .header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--border-color);
+        gap: 1rem;
+    }
+
+    .header h1 {
+        color: var(--header-color);
+        font-size: 1.8rem;
+    }
+    
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    button, .file-input-label {
+        background-color: var(--accent-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.25rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.2s;
+        font-weight: bold;
+    }
+
+    button:hover, .file-input-label:hover {
+        background-color: var(--accent-hover);
+    }
+    
+    button.secondary {
+        background-color: var(--secondary-text);
+    }
+    
+    button.secondary:hover {
+        background-color: var(--primary-text);
+    }
+
+    .file-input-container {
+        position: relative;
+    }
+    
+    input[type="file"] {
+        display: none;
+    }
+
+    .loader {
+        border: 4px solid var(--border-color);
+        border-top: 4px solid var(--accent-color);
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        animation: spin 1s linear infinite;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -14px;
+        margin-left: -14px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .tabs {
+        display: flex;
+        flex-wrap: wrap;
+        border-bottom: 2px solid var(--border-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .tab-button {
+        padding: 0.75rem 1.5rem;
+        cursor: pointer;
+        border: none;
+        background-color: transparent;
+        color: var(--secondary-text);
+        font-size: 1.1rem;
+        font-weight: 500;
+        border-bottom: 3px solid transparent;
+        transition: color 0.2s, border-color 0.2s;
+    }
+
+    .tab-button.active {
+        color: var(--accent-color);
+        border-bottom-color: var(--accent-color);
+    }
+
+    .tab-content {
+        animation: fadeIn 0.5s;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .filters-container {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .filters-container select {
+        min-width: 200px;
+        flex: 1;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .table-container {
+        overflow-x: auto;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border-radius: 8px;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: var(--secondary-bg);
+    }
+
+    th, td {
+        padding: 0.8rem;
+        text-align: right;
+        border: 1px solid var(--border-color);
+    }
+    
+    thead th {
+        background-color: var(--primary-bg);
+        font-weight: bold;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    tr.completed-row {
+        background-color: var(--green-bg);
+        opacity: 0.8;
+        transition: opacity 0.2s;
+    }
+    
+    tr.completed-row:hover {
+        opacity: 1;
+    }
+
+    .status-col {
+        text-align: center !important;
+        vertical-align: middle;
+    }
+
+    .status-col input[type="checkbox"] {
+      transform: scale(1.5);
+      cursor: pointer;
+      accent-color: var(--green);
+    }
+
+    .aggregated-notes-table thead th {
+        background-color: var(--header-color);
+        color: white;
+    }
+
+    .aggregated-notes-table {
+        table-layout: fixed;
+    }
+    
+    .aggregated-notes-table td {
+        vertical-align: top;
+        word-wrap: break-word;
+    }
+
+    select, textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background-color: var(--secondary-bg);
+        color: var(--primary-text);
+        font-size: 0.95rem;
+    }
+
+    select:disabled {
+        background-color: var(--grey-bg);
+        cursor: not-allowed;
+    }
+
+    select.score-3 { background-color: var(--green-bg); border-color: var(--green); }
+    select.score-2 { background-color: var(--gold-bg); border-color: var(--gold); }
+    select.score-1 { background-color: var(--red-bg); border-color: var(--red); }
+    select.score-0 { background-color: var(--grey-bg); border-color: var(--grey); }
+
+    .score-badge {
+        display: inline-block;
+        padding: 0.3em 0.6em;
+        border-radius: 9999px;
+        font-weight: bold;
+        color: var(--primary-text);
+        font-size: 0.85rem;
+    }
+    .score-badge-3 { background-color: var(--green); color: white; }
+    .score-badge-2 { background-color: var(--gold); }
+    .score-badge-1 { background-color: var(--red); color: white; }
+    .score-badge-0 { background-color: var(--grey); color: white; }
+    
+    .chart-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+    }
+    
+    .chart-container {
+        background-color: var(--secondary-bg);
+        padding: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+    }
+    
+    .detailed-results-grid {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 1.5rem;
+        overflow-x: auto;
+        padding-bottom: 1rem;
+    }
+    
+    .detailed-table-wrapper {
+        flex: 1 0 420px;
+        min-width: 380px;
+    }
+    
+    .detailed-table {
+        border: 2px solid #826700;
+    }
+
+    .detailed-table th, .detailed-table td {
+        border: 1px solid #826700;
+        padding: 0.6rem;
+        text-align: right;
+        vertical-align: middle;
+    }
+    
+    .detailed-table .domain-header {
+        background-color: #FFD757;
+        color: var(--black);
+        font-size: 1.2rem;
+        text-align: center;
+        padding: 0.8rem;
+    }
+    
+    .detailed-table thead tr:nth-child(2) th {
+        background-color: #826700;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .detailed-table .principle-row td {
+        background-color: #FFF3CD;
+        font-weight: bold;
+        text-align: center;
+        color: var(--black);
+    }
+    
+    .detailed-table tbody td:nth-child(1) { width: 15%; text-align: center; }
+    .detailed-table tbody td:nth-child(2) { width: 70%; }
+    .detailed-table tbody td:nth-child(3) { width: 15%; text-align: center; }
+
+    .score-dot {
+        height: 18px;
+        width: 18px;
+        border-radius: 50%;
+        display: inline-block;
+        margin: 0 auto;
+    }
+
+    .score-dot-3 { background-color: var(--green); }
+    .score-dot-2 { background-color: var(--gold); }
+    .score-dot-1 { background-color: var(--red); }
+    .score-dot-0 { background-color: var(--black); }
+
+    @media (max-width: 768px) {
+        .header {
+            flex-direction: column;
+            align-items: flex-start;
         }
-
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+        .chart-grid {
+            grid-template-columns: 1fr;
         }
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "xlsx": "https://aistudiocdn.com/xlsx@^0.18.5",
+    "chart.js/": "https://aistudiocdn.com/chart.js@^4.5.1/",
+    "chart.js": "https://aistudiocdn.com/chart.js@^4.5.1",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
+  }
+}
+</script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
 
-        body.dark {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+<body>
+  <div id="root"></div>
+  <script type="text/babel" data-type="module">
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import ReactDOM from 'react-dom/client';
+import * as XLSX from 'xlsx';
+import Chart from 'chart.js/auto';
+
+// --- Type Definitions (for reference, not executed) ---
+/*
+interface StandardItem {
+  id: number;
+  domain: string;
+  principle: string;
+  standardNo: string;
+  standardName: string;
+  standardText: string;
+  evidence: string;
+  evaluation: string;
+  score: number;
+  notes: string;
+  recommendation: string;
+  completed: boolean;
+}
+*/
+
+// --- Data Constants ---
+const initialData = [
+      {"id":101,"domain":"الأخلاقية المهنية","principle":"مبدأ إظهار النزاهة","standardNo":"1.1","standardName":"الصدق والشجاعة المهنية","standardText":"يجب على المدققين الداخليين أداء عملهم بأمانة وشجاعة مهنية. يجب أن يكون المدققون الداخليين صادقين ودقيقين وواضحين ومنفتحين ومحترمين في جميع العلاقات والاتصالات المهنية، حتى عند التعبير عن الشكوك أو تقديم وجهة نظر معارضة. يجب على المدققين الداخليين عدم الإد","evidence":"","evaluation":"كلي","score":3,"notes":"","recommendation":"","completed":false},
+      {"id":102,"domain":"الأخلاقية المهنية","principle":"مبدأ إظهار النزاهة","standardNo":"2.1","standardName":"التوقعات الأخلاقية للمؤسسة","standardText":"","evidence":"","evaluation":"كلي","score":3,"notes":"","recommendation":"","completed":false},
+      {"id":103,"domain":"الأخلاقية المهنية","principle":"مبدأ إظهار النزاهة","standardNo":"3.1","standardName":"السلوك القانوني والأخلاقي","standardText":"","evidence":"","evaluation":"جزئي","score":2,"notes":"","recommendation":"","completed":false},
+      {"id":104,"domain":"الأخلاقية المهنية","principle":"مبدأ الحفاظ على الموضوعية","standardNo":"1.2","standardName":"الموضوعية الفردية","standardText":"","evidence":"","evaluation":"كلي","score":3,"notes":"","recommendation":"","completed":false},
+      {"id":105,"domain":"الأخلاقية المهنية","principle":"مبدأ الحفاظ على الموضوعية","standardNo":"2.2","standardName":"حماية الموضوعية","standardText":"","evidence":"","evaluation":"كلي","score":3,"notes":"","recommendation":"","completed":false},
+      {"id":106,"domain":"الأخلاقية المهنية","principle":"مبدأ الحفاظ على الموضوعية","standardNo":"3.2","standardName":"الافصاح عن معوقات الموضوعية","standardText":"","evidence":"","evaluation":"كلي","score":3,"notes":"","recommendation":"","completed":false},
+      {"id":107,"domain":"الأخلاقية المهنية","principle":"مبدأ إثبات الكفاءة","standardNo":"1.3","standardName":"الكفاءة","standardText":"","evidence":"","evaluation":"جزئي","score":2,"notes":"","recommendation":"","completed":false},
+      {"id":108,"domain":"الأخلاقية المهنية","principle":"مبدأ إثبات الكفاءة","standardNo":"2.3","standardName":"التطوير المهني المستمر","standardText":"","evidence":"","evaluation":"كلي","score":3,"notes":"","recommendation":"","completed":false},
+      {"id":109,"domain":"الأخلاقية المهنية","principle":"مبدأ ممارسة العناية المهنية اللازمة","standardNo":"1.4","standardName":"التوافق مع المعايير العالمية للتدقيق","standardText":"","evidence":"","evaluation":"جزئي","score":2,"notes":"","recommendation":"","completed":false},
+      {"id":110,"domain":"الأخلاقية المهنية","principle":"مبدأ ممارسة العناية المهنية اللازمة","standardNo":"2.4","standardName":"العناية المهنية اللازمة","standardText":"","evidence":"","evaluation":"كلي","score":3,"notes":"","recommendation":"","completed":false},
+      {"id":111,"domain":"الأخلاقية المهنية","principle":"مبدأ ممارسة العناية المهنية اللازمة","standardNo":"3.4","standardName":"الشك المهني","standardText":"","evidence":"","evaluation":"كلي","score":3,"notes":"","recommendation":"","completed":false},
+      {"id":112,"domain":"الأخلاقية المهنية","principle":"مبدأ الحفاظ على السرية","standardNo":"1.5","standardName":"استخدام المعلومات","standardText":"","evidence":"","evaluation":"كلي","score":3,"notes":"","recommendation":"","completed":false},
+      {"id":113,"domain":"الأخلاقية المهنية","principle":"مبدأ الحفاظ على السرية","standardNo":"2.5","standardName":"حماية المعلومات","standardText":"","evidence":"","evaluation":"كلي","score":3,"notes":"","recommendation":"","completed":false},
+      {"id":201,"domain":"حوكمة وظيفة التدقيق الداخلي","principle":"مبدأ اعتماد المجلس للتدقيق","standardNo":"1.6","standardName":"تفويض التدقيق الداخلي","standardText":"","evidence":"","evaluation":"جزئي","score":2,"notes":"","recommendation":"","completed":false},
+      {"id":202,"domain":"حوكمة وظيفة التدقيق الداخلي","principle":"مبدأ اعتماد المجلس للتدقيق","standardNo":"2.6","standardName":"ميثاق التدقيق الداخلي","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":203,"domain":"حوكمة وظيفة التدقيق الداخلي","principle":"مبدأ اعتماد المجلس للتدقيق","standardNo":"3.6","standardName":"دعم المجلس والإدارة العليا","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":204,"domain":"حوكمة وظيفة التدقيق الداخلي","principle":"مبدأ الموقع المستقل للتدقيق","standardNo":"1.7","standardName":"الاستقلالية التنظيمية","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":205,"domain":"حوكمة وظيفة التدقيق الداخلي","principle":"مبدأ الموقع المستقل للتدقيق","standardNo":"2.7","standardName":"مؤهلات الرئيس التنفيذي للتدقيق","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":206,"domain":"حوكمة وظيفة التدقيق الداخلي","principle":"مبدأ إشراف المجلس للتدقيق","standardNo":"1.8","standardName":"تفاعل المجلس","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":207,"domain":"حوكمة وظيفة التدقيق الداخلي","principle":"مبدأ إشراف المجلس للتدقيق","standardNo":"2.8","standardName":"الموارد","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":208,"domain":"حوكمة وظيفة التدقيق الداخلي","principle":"مبدأ إشراف المجلس للتدقيق","standardNo":"3.8","standardName":"الجودة","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":209,"domain":"حوكمة وظيفة التدقيق الداخلي","principle":"مبدأ إشراف المجلس للتدقيق","standardNo":"4.8","standardName":"تقييم الجودة الخارجي","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":301,"domain":"إدارة وظيفة التدقيق الداخلي","principle":"مبدأ التخطيط الإستراتيجي","standardNo":"1.9","standardName":"فهم عمليات الحوكمة وإدارة المخاطر والرقابة","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":302,"domain":"إدارة وظيفة التدقيق الداخلي","principle":"مبدأ التخطيط الإستراتيجي","standardNo":"2.9","standardName":"استراتيجية التدقيق الداخلي","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":303,"domain":"إدارة وظيفة التدقيق الداخلي","principle":"مبدأ التخطيط الإستراتيجي","standardNo":"3.9","standardName":"المناهج","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":304,"domain":"إدارة وظيفة التدقيق الداخلي","principle":"مبدأ التخطيط الإستراتيجي","standardNo":"4.9","standardName":"خطة التدقيق الداخلي","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":305,"domain":"إدارة وظيفة التدقيق الداخلي","principle":"مبدأ التخطيط الإستراتيجي","standardNo":"5.9","standardName":"التنسيق والاعتماد","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":306,"domain":"إدارة وظيفة التدقيق الداخلي","principle":"مبدأ إدارة الموارد","standardNo":"1.10","standardName":"إدارة الموارد المالية","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":307,"domain":"إدارة وظيفة التدقيق الداخلي","principle":"مبدأ إدارة الموارد","standardNo":"2.10","standardName":"إدارة الموارد البشرية","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":308,"domain":"إدارة وظيفة التدقيق الداخلي","principle":"مبدأ إدارة الموارد","standardNo":"3.10","standardName":"الموارد التكنولوجية","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":309,"domain":"إدارة وظيفة التدقيق الداخلي","principle":"مبدأ التواصل بشكل فعال","standardNo":"1.11","standardName":"بناء العلاقات والتواصل مع أصحاب المصلحة","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":310,"domain":"إدارة وظيفة التدقيق الداخلي","principle":"مبدأ التواصل بشكل فعال","standardNo":"2.11","standardName":"التواصل الفعال","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":311,"domain":"إدارة وظيفة التدقيق الداخلي","principle":"مبدأ التواصل بشكل فعال","standardNo":"3.11","standardName":"تبليغ النتائج","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":312,"domain":"إدارة وظيفة التدقيق الداخلي","principle":"مبدأ التواصل بشكل فعال","standardNo":"4.11","standardName":"الأخطاء والسهو","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":313,"domain":"إدارة وظيفة التدقيق الداخلي","principle":"مبدأ التواصل بشكل فعال","standardNo":"5.11","standardName":"الإبلاغ عن قبول المخاطر","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":314,"domain":"إدارة وظيفة التدقيق الداخلي","principle":"مبدأ تعزيز الجودة","standardNo":"1.12","standardName":"تقييم الجودة الداخلي","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":315,"domain":"إدارة وظيفة التدقيق الداخلي","principle":"مبدأ تعزيز الجودة","standardNo":"2.12","standardName":"قياس الأداء","standardText":"","evidence":"","evaluation":"غير مطابق","score":1,"notes":"","recommendation":"","completed":false},
+      {"id":316,"domain":"إدارة وظيفة التدقيق الداخلي","principle":"مبدأ تعزيز الجودة","standardNo":"3.12","standardName":"الإشراف على أداء المهمة وتحسينه","standardText":"","evidence":"","evaluation":"جزئي","score":2,"notes":"","recommendation":"","completed":false},
+      {"id":401,"domain":"أداء خدمات التدقيق الداخلي","principle":"مبدأ التخطيط للمهام بفعالية","standardNo":"1.13","standardName":"اتصالات المهمة","standardText":"","evidence":"","evaluation":"جزئي","score":2,"notes":"","recommendation":"","completed":false},
+      {"id":402,"domain":"أداء خدمات التدقيق الداخلي","principle":"مبدأ التخطيط للمهام بفعالية","standardNo":"2.13","standardName":"تقييم مخاطر المهمة","standardText":"","evidence":"","evaluation":"كلي","score":3,"notes":"","recommendation":"","completed":false},
+      {"id":403,"domain":"أداء خدمات التدقيق الداخلي","principle":"مبدأ التخطيط للمهام بفعالية","standardNo":"3.13","standardName":"أهداف المهمة ونطاقها","standardText":"","evidence":"","evaluation":"كلي","score":3,"notes":"","recommendation":"","completed":false},
+      {"id":404,"domain":"أداء خدمات التدقيق الداخلي","principle":"مبدأ التخطيط للمهام بفعالية","standardNo":"4.13","standardName":"مقاييس التقييم","standardText":"","evidence":"","evaluation":"جزئي","score":2,"notes":"","recommendation":"","completed":false},
+      {"id":405,"domain":"أداء خدمات التدقيق الداخلي","principle":"مبدأ التخطيط للمهام بفعالية","standardNo":"5.13","standardName":"موارد المهمة","standardText":"","evidence":"","evaluation":"جزئي","score":2,"notes":"","recommendation":"","completed":false},
+      {"id":406,"domain":"أداء خدمات التدقيق الداخلي","principle":"مبدأ التخطيط للمهام بفعالية","standardNo":"6.13","standardName":"برنامج العمل","standardText":"","evidence":"","evaluation":"كلي","score":3,"notes":"","recommendation":"","completed":false},
+      {"id":407,"domain":"أداء خدمات التدقيق الداخلي","principle":"مبدأ تنفيذ أعمال المهمة","standardNo":"1.14","standardName":"جمع المعلومات لغرض التحليل والتقييم","standardText":"","evidence":"","evaluation":"جزئي","score":2,"notes":"","recommendation":"","completed":false},
+      {"id":408,"domain":"أداء خدمات التدقيق الداخلي","principle":"مبدأ تنفيذ أعمال المهمة","standardNo":"2.14","standardName":"التحليلات ونتائج المهمة المحتملة","standardText":"","evidence":"","evaluation":"كلي","score":3,"notes":"","recommendation":"","completed":false},
+      {"id":409,"domain":"أداء خدمات التدقيق الداخلي","principle":"مبدأ تنفيذ أعمال المهمة","standardNo":"3.14","standardName":"تقييم النتائج","standardText":"","evidence":"","evaluation":"جزئي","score":2,"notes":"","recommendation":"","completed":false},
+      {"id":410,"domain":"أداء خدمات التدقيق الداخلي","principle":"مبدأ تنفيذ أعمال المهمة","standardNo":"4.14","standardName":"التوصيات وخطط العمل","standardText":"","evidence":"","evaluation":"جزئي","score":2,"notes":"","recommendation":"","completed":false},
+      {"id":411,"domain":"أداء خدمات التدقيق الداخلي","principle":"مبدأ تنفيذ أعمال المهمة","standardNo":"5.14","standardName":"استنتاجات المهمة","standardText":"","evidence":"","evaluation":"كلي","score":3,"notes":"","recommendation":"","completed":false},
+      {"id":412,"domain":"أداء خدمات التدقيق الداخلي","principle":"مبدأ تنفيذ أعمال المهمة","standardNo":"6.14","standardName":"توثيق المهمة","standardText":"","evidence":"","evaluation":"جزئي","score":2,"notes":"","recommendation":"","completed":false},
+      {"id":413,"domain":"أداء خدمات التدقيق الداخلي","principle":"مبدأ الإبلاغ عن نتائج المهمة","standardNo":"1.15","standardName":"إبلاغ المهمة النهائي","standardText":"","evidence":"","evaluation":"كلي","score":3,"notes":"","recommendation":"","completed":false},
+      {"id":414,"domain":"أداء خدمات التدقيق الداخلي","principle":"مبدأ الإبلاغ عن نتائج المهمة","standardNo":"2.15","standardName":"تأكيد تنفيذ التوصيات وخطط العمل","standardText":"","evidence":"","evaluation":"كلي","score":3,"notes":"","recommendation":"","completed":false}
+];
+
+const evaluationMap = { 'كلي': 3, 'جزئي': 2, 'غير مطابق': 1, 'خارج النطاق': 0 };
+const scoreMap = { 3: 'كلي', 2: 'جزئي', 1: 'غير مطابق', 0: 'خارج النطاق' };
+const domainOrder = ["الأخلاقية المهنية", "حوكمة وظيفة التدقيق الداخلي", "إدارة وظيفة التدقيق الداخلي", "أداء خدمات التدقيق الداخلي"];
+
+const sortStandards = (aKey, bKey) => {
+    const standardNoA = aKey.split('||')[0];
+    const standardNoB = bKey.split('||')[0];
+    const partsA = standardNoA.split('.').map(Number);
+    const partsB = standardNoB.split('.').map(Number);
+    const len = Math.max(partsA.length, partsB.length);
+    for (let i = 0; i < len; i++) {
+        const valA = partsA[i] || 0;
+        const valB = partsB[i] || 0;
+        if (valA !== valB) {
+            return valA - valB;
         }
+    }
+    return 0;
+};
 
-        .container-glass {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-        }
+// --- Components ---
+const Loader = () => <div className="loader"></div>;
 
-        .dark .container-glass {
-            background: rgba(30, 30, 46, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .score-0 { background-color: #e5e7eb !important; color: #6b7280; }
-        .score-1 { background-color: #fecaca !important; color: #991b1b; }
-        .score-2 { background-color: #fcd34d !important; color: #78350f; }
-        .score-3 { background-color: #86efac !important; color: #14532d; }
-
-        .tab-button {
-            transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-        }
-
-        .tab-button.active {
-            border-bottom-color: #5D5CDE;
-            background: linear-gradient(135deg, rgba(93, 92, 222, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-        }
-
-        .filter-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .table-row:hover {
-            background-color: rgba(93, 92, 222, 0.05);
-            transform: scale(1.001);
-            transition: all 0.2s ease;
-        }
-
-        textarea, select, input {
-            font-size: 16px !important;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 400px;
-            margin: 2rem auto;
-            max-width: 500px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
-            border-radius: 20px;
-            padding: 1.5rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .dark .stat-card {
-            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
-
-        .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        .notes-table {
-            font-size: 0.75rem;
-            border-collapse: collapse;
-        }
-
-        .notes-table th {
-            background-color: #f59e0b;
-            color: white;
-            padding: 0.5rem;
-            border: 1px solid #d97706;
-            font-weight: bold;
-            resize: horizontal;
-            overflow: auto;
-            position: relative;
-        }
-
-        .notes-table td {
-            padding: 0.5rem;
-            border: 1px solid #e5e7eb;
-            vertical-align: top;
-        }
-
-        .notes-table col {
-            resize: horizontal;
-        }
-
-        .export-btn {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-        }
-
-        .export-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-        }
-
-        .summary-table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        .summary-table th {
-            background-color: #78716c;
-            color: white;
-            padding: 0.75rem;
-            border: 1px solid #57534e;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .summary-table td {
-            padding: 0.5rem;
-            border: 1px solid #d6d3d1;
-            text-align: right;
-        }
-
-        .summary-table .domain-header {
-            background-color: #fbbf24;
-            color: #78350f;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .summary-table .principle-header {
-            background-color: #d4d4d4;
-            font-weight: bold;
-        }
-
-        .avg-green {
-            background-color: #86efac !important;
-            color: #14532d !important;
-            font-weight: bold;
-        }
-
-        .avg-orange {
-            background-color: #fcd34d !important;
-            color: #78350f !important;
-            font-weight: bold;
-        }
-
-        .avg-red {
-            background-color: #fecaca !important;
-            color: #991b1b !important;
-            font-weight: bold;
-        }
-
-        .compliance-summary-section {
-            margin: 30px 0;
-        }
-
-        .compliance-tables-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-            padding: 20px;
-        }
-
-        .compliance-domain-table {
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            overflow: hidden;
-            background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .compliance-domain-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.1em;
-        }
-
-        .compliance-domain-table table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .compliance-domain-table th {
-            background: #f8f9fa;
-            padding: 10px 8px;
-            text-align: center;
-            font-weight: 600;
-            border-bottom: 2px solid #dee2e6;
-            font-size: 0.9em;
-        }
-
-        .compliance-domain-table td {
-            padding: 8px;
-            text-align: center;
-            border-bottom: 1px solid #e0e0e0;
-            font-size: 0.85em;
-        }
-
-        .compliance-domain-table td:nth-child(1) {
-            text-align: center;
-            font-weight: 600;
-            width: 15%;
-        }
-
-        .compliance-domain-table td:nth-child(2) {
-            text-align: right;
-            padding-right: 12px;
-            width: 60%;
-        }
-
-        .compliance-domain-table td:nth-child(3) {
-            font-weight: 600;
-            width: 25%;
-        }
-
-        .compliance-domain-table tr:hover {
-            background: #f8f9fa;
-        }
-
-        .status-indicator {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            margin-left: 8px;
-            vertical-align: middle;
-        }
-
-        .status-green {
-            background: #28a745;
-        }
-
-        .status-orange {
-            background: #ffc107;
-        }
-
-        .status-red {
-            background: #dc3545;
-        }
-
-        .status-black {
-            background: #000000;
-        }
-    </style>
-<script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.3f7572448765332f3047.js"></script></head>
-<body class="p-4">
-    <div class="container mx-auto max-w-7xl">
-        <!-- Header -->
-        <div class="container-glass rounded-3xl p-6 mb-6">
-            <div class="flex items-center justify-between flex-wrap gap-4">
-                <div>
-                    <h1 class="text-4xl font-bold text-gray-800 dark:text-white mb-2">
-                        نظام تقييم المعايير التفصيلية
-                    </h1>
-                    <p class="text-gray-600 dark:text-gray-300">التدقيق الداخلي (IIA 2025)</p>
-                </div>
-                <div class="flex gap-3 flex-wrap">
-                    <label class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-3 rounded-xl cursor-pointer hover:shadow-lg transition-all font-bold">
-                        📁 تحميل ملف Excel
-                        <input type="file" id="fileInput" accept=".xlsx,.xls" class="hidden">
-                    </label>
-                    <button onclick="exportToExcel()" class="export-btn">
-                        📊 تصدير إلى Excel
-                    </button>
-                    <button onclick="exportToWord()" class="export-btn" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
-                        📄 تصدير إلى Word
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Filters Section -->
-        <div class="container-glass rounded-3xl p-6 mb-6" id="filtersSection">
-            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">🔍 الفلاتر</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-gray-700 dark:text-gray-300 font-semibold mb-2">المجال</label>
-                    <select id="domainFilter" class="w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                        <option value="">الكل</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-gray-700 dark:text-gray-300 font-semibold mb-2">المبدأ</label>
-                    <select id="principleFilter" class="w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                        <option value="">الكل</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-gray-700 dark:text-gray-300 font-semibold mb-2">المعيار</label>
-                    <select id="standardFilter" class="w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                        <option value="">الكل</option>
-                    </select>
-                </div>
-            </div>
-            <div class="flex gap-3 mt-4 flex-wrap" id="activeFilters"></div>
-        </div>
-
-        <!-- Tabs -->
-        <div class="container-glass rounded-t-3xl p-2 mb-0">
-            <div class="flex gap-2 overflow-x-auto scrollbar-hide">
-                <button class="tab-button active px-6 py-3 rounded-xl font-bold text-gray-700 dark:text-gray-300 whitespace-nowrap" onclick="switchTab('data')">
-                    📊 البيانات والتقييم
-                </button>
-                <button class="tab-button px-6 py-3 rounded-xl font-bold text-gray-700 dark:text-gray-300 whitespace-nowrap" onclick="switchTab('domainResults')">
-                    📈 نتائج المجالات
-                </button>
-                <button class="tab-button px-6 py-3 rounded-xl font-bold text-gray-700 dark:text-gray-300 whitespace-nowrap" onclick="switchTab('standardResults')">
-                    📋 نتائج المعايير
-                </button>
-                <button class="tab-button px-6 py-3 rounded-xl font-bold text-gray-700 dark:text-gray-300 whitespace-nowrap" onclick="switchTab('notes')">
-                    📝 الملاحظات المجمعة
-                </button>
-                <button class="tab-button px-6 py-3 rounded-xl font-bold text-gray-700 dark:text-gray-300 whitespace-nowrap" onclick="switchTab('summary')">
-                    📑 ملخص التوافق
-                </button>
-            </div>
-        </div>
-
-        <!-- Tab Content -->
-        <div class="container-glass rounded-b-3xl rounded-t-none p-6">
-            <!-- Data Tab -->
-            <div id="dataTab" class="tab-content">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm" id="dataTable">
-                        <thead class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white sticky top-0">
-                            <tr>
-                                <th class="px-4 py-3 text-right font-bold">#</th>
-                                <th class="px-4 py-3 text-right font-bold">المجال</th>
-                                <th class="px-4 py-3 text-right font-bold">المبدأ</th>
-                                <th class="px-4 py-3 text-right font-bold">المعيار</th>
-                                <th class="px-4 py-3 text-right font-bold">نص المعيار</th>
-                                <th class="px-4 py-3 text-right font-bold">الأدلة</th>
-                                <th class="px-4 py-3 text-right font-bold">التقييم</th>
-                                <th class="px-4 py-3 text-right font-bold">الملاحظات</th>
-                                <th class="px-4 py-3 text-right font-bold">التوصية</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody" class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Domain Results Tab -->
-            <div id="domainResultsTab" class="tab-content hidden">
-                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">
-                    الرسوم البيانية الإشعاعية للمجالات
-                </h2>
-                <div id="radarChartsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                </div>
-            </div>
-
-            <!-- Standard Results Tab -->
-            <div id="standardResultsTab" class="tab-content hidden">
-                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6">نتائج المعايير</h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
-                            <tr>
-                                <th class="px-4 py-3 text-right font-bold">رقم المعيار</th>
-                                <th class="px-4 py-3 text-right font-bold">اسم المعيار</th>
-                                <th class="px-4 py-3 text-right font-bold">المتوسط</th>
-                                <th class="px-4 py-3 text-right font-bold">عدد البنود</th>
-                                <th class="px-4 py-3 text-right font-bold">التوزيع</th>
-                            </tr>
-                        </thead>
-                        <tbody id="standardResultsBody" class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Notes Tab -->
-            <div id="notesTab" class="tab-content hidden">
-                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6">الملاحظات المجمعة حسب المعيار</h2>
-                <div id="notesContainer" class="overflow-x-auto">
-                </div>
-            </div>
-
-            <!-- Summary Tab -->
-            <div id="summaryTab" class="tab-content hidden">
-                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">
-                    ملخص التوافق مع المعايير التفصيلية للتدقيق الداخلي
-                </h2>
-                <div id="summaryContainer" class="overflow-x-auto">
-                </div>
-            </div>
-        </div>
+const Header = ({ onFileChange, onSaveToExcel, onExportWord, onToggleDarkMode, isLoading, isDarkMode }) => (
+  <header className="header">
+    <h1>أداة التدقيق والتقييم التفاعلية</h1>
+    <div className="controls">
+      <div className="file-input-container">
+        <label htmlFor="file-upload" className="file-input-label">استيراد ملف...</label>
+        <input id="file-upload" type="file" onChange={onFileChange} accept=".csv,.xlsx,.xls" />
+        {isLoading && <Loader />}
+      </div>
+      <button onClick={onSaveToExcel}>حفظ إلى Excel</button>
+      <button onClick={onExportWord}>تصدير إلى Word</button>
+      <button className="secondary" onClick={onToggleDarkMode}>
+        {isDarkMode ? 'الوضع الفاتح' : 'الوضع الداكن'}
+      </button>
     </div>
+  </header>
+);
 
-    <script>
-        // Dark mode detection
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark');
+const Tabs = ({ activeTab, onTabClick }) => {
+    const TABS = [
+        { name: 'data', label: 'البيانات والتقييم' },
+        { name: 'details', label: 'نتائج تقييم المعايير التفصيلي' },
+        { name: 'results', label: 'الرسوم البيانية' },
+        { name: 'notes', label: 'الملاحظات والتوصيات المجمعة' },
+    ];
+    return (
+        <div className="tabs">
+            {TABS.map(tab => (
+                <button 
+                    key={tab.name} 
+                    className={`tab-button ${activeTab === tab.name ? 'active' : ''}`} 
+                    onClick={() => onTabClick(tab.name)}
+                >
+                    {tab.label}
+                </button>
+            ))}
+        </div>
+    );
+};
+
+const DataFilters = ({ filters, options, onChange }) => (
+    <div className="filters-container">
+        <select value={filters.domain} onChange={e => onChange('domain', e.target.value)}>
+            <option value="">-- كل المجالات --</option>
+            {options.domains.map((d) => <option key={d} value={d}>{d}</option>)}
+        </select>
+        <select value={filters.principle} onChange={e => onChange('principle', e.target.value)} disabled={!filters.domain}>
+            <option value="">-- كل المبادئ --</option>
+            {options.principles.map((p) => <option key={p} value={p}>{p}</option>)}
+        </select>
+        <select value={filters.standardNo} onChange={e => onChange('standardNo', e.target.value)} disabled={!filters.principle}>
+            <option value="">-- كل المعايير --</option>
+            {options.standards.map((s) => <option key={s} value={s}>{s}</option>)}
+        </select>
+    </div>
+);
+
+const DataTable = ({ data, onDataChange }) => (
+    <div className="table-container">
+        <table>
+            <thead>
+            <tr>
+                <th>المجال</th>
+                <th>المبدأ</th>
+                <th>المعيار</th>
+                <th>اسم المعيار</th>
+                <th>نص المعيار</th>
+                <th>الأدلة والشواهد</th>
+                <th>التقييم</th>
+                <th>الملاحظات</th>
+                <th>التوصيات</th>
+                <th>اكتمل</th>
+            </tr>
+            </thead>
+            <tbody>
+            {data.map(item => (
+                <tr key={item.id} className={item.completed ? 'completed-row' : ''}>
+                    <td style={{minWidth: '150px'}}>{item.domain}</td>
+                    <td style={{minWidth: '200px'}}>{item.principle}</td>
+                    <td>{item.standardNo}</td>
+                    <td style={{minWidth: '200px'}}>{item.standardName}</td>
+                    <td style={{minWidth: '250px'}}>{item.standardText}</td>
+                    <td style={{minWidth: '200px'}}>{item.evidence}</td>
+                    <td style={{minWidth: '150px'}}>
+                        <select 
+                            value={item.score}
+                            onChange={e => onDataChange(item.id, 'score', parseInt(e.target.value, 10))}
+                            className={`score-${item.score}`}
+                        >
+                            <option value="3">3 - كلي</option>
+                            <option value="2">2 - جزئي</option>
+                            <option value="1">1 - غير مطابق</option>
+                            <option value="0">0 - خارج النطاق</option>
+                        </select>
+                    </td>
+                    <td style={{minWidth: '200px'}}><textarea rows={3} value={item.notes} onChange={e => onDataChange(item.id, 'notes', e.target.value)} /></td>
+                    <td style={{minWidth: '200px'}}><textarea rows={3} value={item.recommendation} onChange={e => onDataChange(item.id, 'recommendation', e.target.value)} /></td>
+                    <td className="status-col">
+                        <input
+                            type="checkbox"
+                            checked={item.completed || false}
+                            onChange={e => onDataChange(item.id, 'completed', e.target.checked)}
+                            title={item.completed ? 'وضع علامة كـ "غير مكتمل"' : 'وضع علامة كـ "مكتمل"'}
+                        />
+                    </td>
+                </tr>
+            ))}
+            </tbody>
+        </table>
+    </div>
+);
+
+const DataView = ({ data, onDataChange }) => {
+    const [filters, setFilters] = useState({ domain: '', principle: '', standardNo: '' });
+
+    const filterOptions = useMemo(() => {
+        const domains = [...new Set(data.map(item => item.domain))];
+        const principles = filters.domain ? [...new Set(data.filter(item => item.domain === filters.domain).map(item => item.principle))] : [];
+        const standards = filters.principle ? [...new Set(data.filter(item => item.principle === filters.principle && item.domain === filters.domain).map(item => item.standardNo))] : [];
+        return { domains, principles, standards };
+    }, [data, filters.domain, filters.principle]);
+
+    const filteredData = useMemo(() => {
+        return data.filter(item => {
+        const domainMatch = !filters.domain || item.domain === filters.domain;
+        const principleMatch = !filters.principle || item.principle === filters.principle;
+        const standardMatch = !filters.standardNo || item.standardNo === filters.standardNo;
+        return domainMatch && principleMatch && standardMatch;
+        });
+    }, [data, filters]);
+
+    const handleFilterChange = (filterName, value) => {
+        setFilters(prev => {
+        const newFilters = { ...prev, [filterName]: value };
+        if (filterName === 'domain') {
+            newFilters.principle = '';
+            newFilters.standardNo = '';
         }
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            if (event.matches) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
+        if (filterName === 'principle') {
+            newFilters.standardNo = '';
+        }
+        return newFilters;
+        });
+    };
+
+    return (
+        <div>
+            <DataFilters filters={filters} options={filterOptions} onChange={handleFilterChange} />
+            <DataTable data={filteredData} onDataChange={onDataChange} />
+        </div>
+    );
+};
+
+const RadarChart = ({ domain, data, isDarkMode }) => {
+  const chartRef = useRef(null);
+  const chartInstance = useRef(null);
+
+  useEffect(() => {
+    if (chartInstance.current) {
+      chartInstance.current.destroy();
+    }
+    
+    if (!chartRef.current) return;
+
+    const textColor = isDarkMode ? '#e0e0e0' : '#212529';
+    const gridColor = '#A6A6A6';
+
+    const ctx = chartRef.current.getContext('2d');
+    if (!ctx) return;
+
+    chartInstance.current = new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: data.principles.map((p) => p.name),
+        datasets: [{
+          label: `متوسط الدرجة`,
+          data: data.principles.map((p) => p.averageScore),
+          fill: false,
+          borderColor: '#C00000',
+          pointBackgroundColor: '#C00000',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#C00000',
+          pointStyle: 'rect',
+          pointRadius: 11,
+          pointHoverRadius: 13
+        }]
+      },
+      options: {
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            angleLines: { color: gridColor, lineWidth: 2.5 },
+            grid: { color: gridColor, lineWidth: 2.5 },
+            pointLabels: {
+              font: { size: 14 },
+               color: textColor,
+            },
+            ticks: {
+              backdropColor: 'rgba(0,0,0,0)',
+              color: isDarkMode ? '#a0a0a0' : '#6c757d',
+              stepSize: 1,
+            },
+            suggestedMin: 0,
+            suggestedMax: 3
+          }
+        },
+        plugins: {
+          legend: {
+            labels: { color: textColor }
+          }
+        },
+        elements: {
+          line: { borderWidth: 4 }
+        }
+      }
+    });
+
+    return () => { if(chartInstance.current) chartInstance.current.destroy(); };
+  }, [data, domain, isDarkMode]);
+
+  return (
+    <div className="chart-container">
+      <h3>{domain}</h3>
+      <div style={{ position: 'relative', height: '500px' }}>
+        <canvas ref={chartRef}></canvas>
+      </div>
+    </div>
+  );
+};
+
+const ChartsView = ({ processedData, isDarkMode }) => (
+  <div>
+    <h2>نتائج المجالات الرئيسية (متوسط الدرجة حسب المبدأ)</h2>
+    <div className="chart-grid">
+      {domainOrder.map(domain => {
+        const dData = processedData[domain];
+        if (!dData) return null;
+        return <RadarChart key={domain} domain={domain} data={dData} isDarkMode={isDarkMode} />;
+      })}
+    </div>
+  </div>
+);
+
+const DetailedResultsView = ({ processedData }) => {
+    const calculateAverage = (items) => {
+        const validItems = items.filter(item => item.score > 0);
+        if (validItems.length === 0) return { average: 0, rounded: 0 };
+        const sum = validItems.reduce((acc, item) => acc + item.score, 0);
+        const average = sum / validItems.length;
+        return { average: average, rounded: Math.round(average) };
+    };
+
+    const getAverageScoreDotClass = (average) => {
+        if (average > 2.5) return 'score-dot-3';
+        if (average >= 1.5) return 'score-dot-2';
+        if (average > 0) return 'score-dot-1';
+        return 'score-dot-0';
+    };
+    
+    return (
+        <div>
+            <h2>نتائج تقييم المعايير التفصيلي</h2>
+            <div className="detailed-results-grid">
+                {domainOrder.map(domain => {
+                    if (!processedData[domain] || !processedData[domain].items) return null;
+                    
+                    const domainItems = processedData[domain].items;
+                    const principlesInOrder = [];
+                    domainItems.forEach((item) => {
+                        if (!principlesInOrder.includes(item.principle)) {
+                            principlesInOrder.push(item.principle);
+                        }
+                    });
+                    const { average, rounded } = calculateAverage(domainItems);
+
+                    return (
+                        <div key={domain} className="detailed-table-wrapper">
+                            <table className="detailed-table">
+                                <thead>
+                                    <tr>
+                                        <th colSpan={3} className="domain-header">
+                                            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px'}}>
+                                                <span>{domain}</span>
+                                                {average > 0 && (
+                                                   <span style={{fontSize: '0.9rem', fontWeight: 'normal'}}>
+                                                       متوسط التقييم: 
+                                                       <span className={`score-badge score-badge-${rounded}`} style={{marginRight: '5px'}}>
+                                                           {average.toFixed(2)}
+                                                       </span>
+                                                   </span>
+                                                )}
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>رقم المعيار</th>
+                                        <th>اسم المعيار</th>
+                                        <th>متوسط التقييم</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {principlesInOrder.map(principle => {
+                                        const principleItems = domainItems.filter((item) => item.principle === principle);
+                                        
+                                        const standards = {};
+                                        principleItems.forEach((item) => {
+                                            const groupKey = `${item.standardNo}||${item.standardName}`;
+                                            if (!standards[groupKey]) {
+                                                standards[groupKey] = {
+                                                    items: [],
+                                                    standardNo: item.standardNo,
+                                                    standardName: item.standardName
+                                                };
+                                            }
+                                            standards[groupKey].items.push(item);
+                                        });
+
+                                        return (
+                                            <React.Fragment key={principle}>
+                                                <tr className="principle-row">
+                                                    <td colSpan={3}>{principle}</td>
+                                                </tr>
+                                                {Object.keys(standards).sort(sortStandards).map(groupKey => {
+                                                    const group = standards[groupKey];
+                                                    const { average } = calculateAverage(group.items);
+                                                    const dotClass = getAverageScoreDotClass(average);
+                                                    const title = `المتوسط: ${average.toFixed(2)}`;
+                                                    return (
+                                                        <tr key={groupKey}>
+                                                            <td>{group.standardNo}</td>
+                                                            <td>{group.standardName}</td>
+                                                            <td>
+                                                                <div 
+                                                                    className={`score-dot ${dotClass}`}
+                                                                    title={title}
+                                                                ></div>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </React.Fragment>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+};
+
+const AggregatedNotesView = ({ aggregatedNotes }) => {
+    const [scoreFilter, setScoreFilter] = useState('all');
+
+    const filteredNotes = useMemo(() => {
+        const notesArray = Object.values(aggregatedNotes);
+        if (scoreFilter === 'all') {
+            return notesArray;
+        }
+        return notesArray.filter((group) => {
+            const score = group.averageScore;
+            switch (scoreFilter) {
+                case 'compliant':
+                    return score >= 2.5;
+                case 'partial':
+                    return score >= 1.5 && score < 2.5;
+                case 'non-compliant':
+                    return score >= 1 && score < 1.5;
+                case 'out-of-scope':
+                    return score < 1;
+                default:
+                    return true;
             }
         });
+    }, [aggregatedNotes, scoreFilter]);
 
-        let allData = [];
-        let filteredData = [];
-        let radarChartInstances = [];
-
-        // File upload handler
-        document.getElementById('fileInput').addEventListener('change', handleFile);
-
-        function handleFile(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-
-                allData = jsonData.map((row, index) => ({
-                    id: row['Id'] || index + 1,
-                    domainNo: row['DomainNo'],
-                    domainName: row['DomainName'],
-                    principleNo: row['PrincipleNo'],
-                    principleName: row['PrincipleName'],
-                    standardNo: row['StandardNo'],
-                    standardName: row['StandardName'],
-                    standardText: row['StandardText'] || '',
-                    evidence: row['الأدلة الدالة على لتنفيذ'] || '',
-                    assessment: row['التقييم'] || '',
-                    score: row['الدرجة'] || 0,
-                    notes: row['الملاحظات'] || '',
-                    recommendation: row['التوصية'] || ''
-                }));
-
-                filteredData = [...allData];
-                populateFilters();
-                renderTable();
-                renderDomainResults();
-                renderStandardResults();
-                renderNotes();
-                renderSummary();
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        // Calculate average excluding zeros
-        function calculateAverage(scores) {
-            const nonZeroScores = scores.filter(s => s !== 0);
-            if (nonZeroScores.length === 0) return 0;
-            return nonZeroScores.reduce((a, b) => a + b, 0) / nonZeroScores.length;
-        }
-
-        // Populate filter dropdowns
-        function populateFilters() {
-            const domains = [...new Set(allData.map(item => item.domainName))].filter(Boolean);
-            const principles = [...new Set(allData.map(item => item.principleName))].filter(Boolean);
-            const standards = [...new Set(allData.map(item => item.standardName))].filter(Boolean);
-
-            const domainSelect = document.getElementById('domainFilter');
-            const principleSelect = document.getElementById('principleFilter');
-            const standardSelect = document.getElementById('standardFilter');
-
-            domainSelect.innerHTML = '<option value="">الكل</option>';
-            principleSelect.innerHTML = '<option value="">الكل</option>';
-            standardSelect.innerHTML = '<option value="">الكل</option>';
-
-            domains.forEach(domain => {
-                domainSelect.innerHTML += `<option value="${domain}">${domain}</option>`;
-            });
-
-            principles.forEach(principle => {
-                principleSelect.innerHTML += `<option value="${principle}">${principle}</option>`;
-            });
-
-            standards.forEach(standard => {
-                standardSelect.innerHTML += `<option value="${standard}">${standard}</option>`;
-            });
-
-            domainSelect.addEventListener('change', applyFilters);
-            principleSelect.addEventListener('change', applyFilters);
-            standardSelect.addEventListener('change', applyFilters);
-        }
-
-        function applyFilters() {
-            const domainFilter = document.getElementById('domainFilter').value;
-            const principleFilter = document.getElementById('principleFilter').value;
-            const standardFilter = document.getElementById('standardFilter').value;
-
-            filteredData = allData.filter(item => {
-                return (!domainFilter || item.domainName === domainFilter) &&
-                       (!principleFilter || item.principleName === principleFilter) &&
-                       (!standardFilter || item.standardName === standardFilter);
-            });
-
-            updateActiveFilters();
-            renderTable();
-            renderDomainResults();
-            renderStandardResults();
-            renderNotes();
-            renderSummary();
-        }
-
-        function updateActiveFilters() {
-            const container = document.getElementById('activeFilters');
-            const domainFilter = document.getElementById('domainFilter').value;
-            const principleFilter = document.getElementById('principleFilter').value;
-            const standardFilter = document.getElementById('standardFilter').value;
-
-            let html = '';
-            if (domainFilter) html += `<span class="filter-badge">المجال: ${domainFilter}</span>`;
-            if (principleFilter) html += `<span class="filter-badge">المبدأ: ${principleFilter}</span>`;
-            if (standardFilter) html += `<span class="filter-badge">المعيار: ${standardFilter}</span>`;
-
-            container.innerHTML = html;
-        }
-
-        function getScoreClass(score) {
-            return `score-${score}`;
-        }
-
-        function getScoreLabel(score) {
-            const labels = {
-                0: 'خارج النطاق',
-                1: 'غير مطابق',
-                2: 'جزئي',
-                3: 'كلي'
-            };
-            return labels[score] || '';
-        }
-
-        function getAvgClass(avg) {
-            if (avg > 2.49) return 'avg-green';
-            if (avg < 1.49) return 'avg-red';
-            return 'avg-orange';
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-
-            filteredData.forEach((item, index) => {
-                const row = document.createElement('tr');
-                row.className = 'table-row border-b border-gray-200 dark:border-gray-700';
-                row.innerHTML = `
-                    <td class="px-4 py-3">${index + 1}</td>
-                    <td class="px-4 py-3 font-semibold">${item.domainName || ''}</td>
-                    <td class="px-4 py-3">${item.principleName || ''}</td>
-                    <td class="px-4 py-3 font-semibold">${item.standardNo || ''} - ${item.standardName || ''}</td>
-                    <td class="px-4 py-3 text-xs max-w-xs" title="${item.standardText}">${item.standardText.substring(0, 100)}${item.standardText.length > 100 ? '...' : ''}</td>
-                    <td class="px-4 py-3 text-xs max-w-xs" title="${item.evidence}">${item.evidence.substring(0, 80)}${item.evidence.length > 80 ? '...' : ''}</td>
-                    <td class="px-4 py-3">
-                        <select
-                            class="px-3 py-2 rounded-full font-bold ${getScoreClass(item.score)}"
-                            onchange="updateScore(${item.id}, this.value)"
-                        >
-                            <option value="0" ${item.score === 0 ? 'selected' : ''}>0</option>
-                            <option value="1" ${item.score === 1 ? 'selected' : ''}>1</option>
-                            <option value="2" ${item.score === 2 ? 'selected' : ''}>2</option>
-                            <option value="3" ${item.score === 3 ? 'selected' : ''}>3</option>
-                        </select>
-                        <div class="mt-1 text-xs text-center">
-                            <span class="px-2 py-1 rounded ${getScoreClass(item.score)}">
-                                ${getScoreLabel(item.score)}
-                            </span>
-                        </div>
-                    </td>
-                    <td class="px-4 py-3">
-                        <textarea
-                            class="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            rows="2"
-                            data-id="${item.id}"
-                            onchange="updateNotes(${item.id}, this.value)"
-                        >${item.notes || ''}</textarea>
-                    </td>
-                    <td class="px-4 py-3">
-                        <textarea
-                            class="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            rows="2"
-                            data-id="${item.id}"
-                            onchange="updateRecommendation(${item.id}, this.value)"
-                        >${item.recommendation || ''}</textarea>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function updateAssessment(id, value) {
-            const item = allData.find(i => i.id === id);
-            if (item) {
-                item.assessment = value;
-                renderNotes();
-            }
-        }
-
-        function updateScore(id, value) {
-            const item = allData.find(i => i.id === id);
-            if (item) {
-                item.score = parseInt(value);
-                renderTable();
-                renderDomainResults();
-                renderStandardResults();
-                renderNotes();
-                renderSummary();
-            }
-        }
-
-        function updateNotes(id, value) {
-            const item = allData.find(i => i.id === id);
-            if (item) {
-                item.notes = value;
-                renderNotes();
-            }
-        }
-
-        function updateRecommendation(id, value) {
-            const item = allData.find(i => i.id === id);
-            if (item) {
-                item.recommendation = value;
-                renderNotes();
-            }
-        }
-
-        // Render domain results with radar charts for each domain
-        function renderDomainResults() {
-            const container = document.getElementById('radarChartsContainer');
-            container.innerHTML = '';
-
-            // Destroy old chart instances
-            radarChartInstances.forEach(chart => chart.destroy());
-            radarChartInstances = [];
-
-            // Group by domain
-            const domainGroups = {};
-            filteredData.forEach(item => {
-                if (!domainGroups[item.domainName]) {
-                    domainGroups[item.domainName] = {};
-                }
-                if (!domainGroups[item.domainName][item.principleName]) {
-                    domainGroups[item.domainName][item.principleName] = [];
-                }
-                domainGroups[item.domainName][item.principleName].push(item.score);
-            });
-
-            // Create a chart for each domain
-            Object.keys(domainGroups).forEach(domainName => {
-                const principles = domainGroups[domainName];
-                const labels = Object.keys(principles);
-                const averages = labels.map(label => calculateAverage(principles[label]));
-
-                const chartCard = document.createElement('div');
-                chartCard.className = 'bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg';
-                chartCard.innerHTML = `
-                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4 text-center">${domainName}</h3>
-                    <div class="chart-container">
-                        <canvas id="chart-${domainName.replace(/\s+/g, '-')}"></canvas>
-                    </div>
-                `;
-                container.appendChild(chartCard);
-
-                const ctx = document.getElementById(`chart-${domainName.replace(/\s+/g, '-')}`);
-                const chart = new Chart(ctx, {
-                    type: 'radar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'متوسط التقييم',
-                            data: averages,
-                            backgroundColor: 'rgba(93, 92, 222, 0.2)',
-                            borderColor: 'rgba(93, 92, 222, 1)',
-                            borderWidth: 3,
-                            pointBackgroundColor: 'rgba(93, 92, 222, 1)',
-                            pointBorderColor: '#fff',
-                            pointHoverBackgroundColor: '#fff',
-                            pointHoverBorderColor: 'rgba(93, 92, 222, 1)',
-                            pointRadius: 6,
-                            pointHoverRadius: 8
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        scales: {
-                            r: {
-                                angleLines: { display: true },
-                                suggestedMin: 0,
-                                suggestedMax: 3,
-                                ticks: {
-                                    stepSize: 0.5,
-                                    font: { size: 12, family: 'Cairo' }
-                                },
-                                pointLabels: {
-                                    font: { size: 11, family: 'Cairo', weight: 'bold' }
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                labels: {
-                                    font: { size: 14, family: 'Cairo', weight: 'bold' }
-                                }
-                            }
-                        }
-                    }
-                });
-
-                radarChartInstances.push(chart);
-            });
-        }
-
-        function renderStandardResults() {
-            const standardGroups = {};
-
-            filteredData.forEach(item => {
-                const key = `${item.standardNo}-${item.standardName}`;
-                if (!standardGroups[key]) {
-                    standardGroups[key] = {
-                        standardNo: item.standardNo,
-                        standardName: item.standardName,
-                        scores: []
-                    };
-                }
-                standardGroups[key].scores.push(item.score);
-            });
-
-            const tbody = document.getElementById('standardResultsBody');
-            tbody.innerHTML = '';
-
-            Object.keys(standardGroups).forEach(key => {
-                const group = standardGroups[key];
-                const avg = calculateAverage(group.scores);
-                const total = group.scores.length;
-                const distribution = {
-                    0: group.scores.filter(s => s === 0).length,
-                    1: group.scores.filter(s => s === 1).length,
-                    2: group.scores.filter(s => s === 2).length,
-                    3: group.scores.filter(s => s === 3).length
-                };
-
-                const row = document.createElement('tr');
-                row.className = 'border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700';
-                row.innerHTML = `
-                    <td class="px-4 py-3 font-bold">${group.standardNo}</td>
-                    <td class="px-4 py-3">${group.standardName}</td>
-                    <td class="px-4 py-3">
-                        <span class="text-2xl font-bold ${avg >= 2.5 ? 'text-green-600' : avg >= 1.5 ? 'text-yellow-600' : 'text-red-600'}">
-                            ${avg.toFixed(2)}
-                        </span>
-                    </td>
-                    <td class="px-4 py-3 text-center font-semibold">${total}</td>
-                    <td class="px-4 py-3">
-                        <div class="flex gap-1 items-center text-xs">
-                            ${distribution[3] > 0 ? `<span class="score-3 px-2 py-1 rounded">3: ${distribution[3]}</span>` : ''}
-                            ${distribution[2] > 0 ? `<span class="score-2 px-2 py-1 rounded">2: ${distribution[2]}</span>` : ''}
-                            ${distribution[1] > 0 ? `<span class="score-1 px-2 py-1 rounded">1: ${distribution[1]}</span>` : ''}
-                            ${distribution[0] > 0 ? `<span class="score-0 px-2 py-1 rounded">0: ${distribution[0]}</span>` : ''}
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function renderNotes() {
-            const standardGroups = {};
-
-            filteredData.forEach(item => {
-                const key = `${item.standardNo}-${item.standardName}`;
-                if (!standardGroups[key]) {
-                    standardGroups[key] = {
-                        standardNo: item.standardNo,
-                        standardName: item.standardName,
-                        standardText: item.standardText,
-                        scores: [],
-                        notes: [],
-                        recommendations: []
-                    };
-                }
-                standardGroups[key].scores.push(item.score);
-                if (item.notes && item.notes.trim()) {
-                    standardGroups[key].notes.push(item.notes);
-                }
-                if (item.recommendation && item.recommendation.trim()) {
-                    standardGroups[key].recommendations.push(item.recommendation);
-                }
-            });
-
-            const container = document.getElementById('notesContainer');
-
-            let tableHTML = `
-                <table class="notes-table w-full">
-                    <colgroup>
-                        <col style="width: 8%;">
-                        <col style="width: 35%;">
-                        <col style="width: 6%;">
-                        <col style="width: 35%;">
-                        <col style="width: 16%;">
-                    </colgroup>
+    return (
+        <div>
+            <h2>الملاحظات والتوصيات المجمعة حسب المعيار</h2>
+            <div className="filters-container" style={{maxWidth: '400px'}}>
+                 <select value={scoreFilter} onChange={e => setScoreFilter(e.target.value)}>
+                    <option value="all">فلترة حسب متوسط التقييم: الكل</option>
+                    <option value="compliant">مطابق كلياً (2.5 - 3)</option>
+                    <option value="partial">مطابق جزئياً (1.5 - 2.49)</option>
+                    <option value="non-compliant">غير مطابق (1 - 1.49)</option>
+                    <option value="out-of-scope">خارج النطاق (0 - 0.99)</option>
+                </select>
+            </div>
+             <div className="table-container">
+                <table className="aggregated-notes-table">
                     <thead>
                         <tr>
-                            <th>المعيار</th>
-                            <th>نص المعيار</th>
-                            <th>التقييم (3/1)</th>
-                            <th>الملاحظة</th>
-                            <th>التوصية</th>
+                            <th style={{width: '10%'}}>المعيار</th>
+                            <th style={{width: '15%'}}>اسم المعيار</th>
+                            <th style={{width: '25%'}}>نص المعيار</th>
+                            <th style={{width: '10%'}}>متوسط التقييم</th>
+                            <th style={{width: '20%'}}>الملاحظات المجمعة</th>
+                            <th style={{width: '20%'}}>التوصيات المجمعة</th>
                         </tr>
                     </thead>
                     <tbody>
-            `;
-
-            Object.keys(standardGroups).forEach(key => {
-                const group = standardGroups[key];
-                if (group.notes.length === 0 && group.recommendations.length === 0) return;
-
-                const avg = calculateAverage(group.scores);
-                const allNotes = group.notes.join(' | ');
-                const allRecommendations = group.recommendations.join(' | ');
-
-                tableHTML += `
-                    <tr>
-                        <td class="font-bold">${group.standardNo}</td>
-                        <td>${group.standardText}</td>
-                        <td class="text-center font-bold ${avg >= 2.5 ? 'text-green-600' : avg >= 1.5 ? 'text-yellow-600' : 'text-red-600'}">${avg.toFixed(1)}</td>
-                        <td>${allNotes}</td>
-                        <td>${allRecommendations}</td>
-                    </tr>
-                `;
-            });
-
-            tableHTML += `
+                        {filteredNotes.map((group) => (
+                            <tr key={`${group.standardNo}||${group.standardName}`}>
+                                <td>{group.standardNo}</td>
+                                <td>{group.standardName}</td>
+                                <td>{group.standardText}</td>
+                                <td>
+                                    <span className={`score-badge score-badge-${Math.round(group.averageScore)}`}>
+                                        {group.averageScore.toFixed(2)}
+                                    </span>
+                                </td>
+                                <td style={{whiteSpace: 'pre-wrap'}}>{group.notes.join('\n---\n')}</td>
+                                <td style={{whiteSpace: 'pre-wrap'}}>{group.recommendations.join('\n---\n')}</td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
-            `;
+             </div>
+        </div>
+    );
+};
 
-            if (Object.keys(standardGroups).filter(k => standardGroups[k].notes.length > 0 || standardGroups[k].recommendations.length > 0).length === 0) {
-                container.innerHTML = '<div class="text-center text-gray-500 dark:text-gray-400 py-8">لا توجد ملاحظات أو توصيات متاحة</div>';
-            } else {
-                container.innerHTML = tableHTML;
+// --- Main App Component ---
+const App = () => {
+  const [data, setData] = useState(() => initialData.map(item => ({ ...item, completed: item.completed || false })));
+  const [activeTab, setActiveTab] = useState('data');
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  useEffect(() => {
+    document.body.className = isDarkMode ? 'dark-mode' : '';
+  }, [isDarkMode]);
+
+  const handleDataChange = useCallback((id, field, value) => {
+    setData(prevData =>
+        prevData.map(item => {
+            if (item.id === id) {
+                const updatedItem = { ...item, [field]: value };
+                if (field === 'score') {
+                updatedItem.evaluation = scoreMap[value];
+                }
+                return updatedItem;
             }
-        }
+            return item;
+        })
+    );
+  }, []);
+  
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-        function renderSummary() {
-            const container = document.getElementById('summaryContainer');
+    setIsLoading(true);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const fileData = new Uint8Array(e.target?.result);
+            const workbook = XLSX.read(fileData, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-            // Group data by domain and standard
-            const domainGroups = {};
-            filteredData.forEach(item => {
-                if (!domainGroups[item.domainName]) {
-                    domainGroups[item.domainName] = {
-                        domainNo: item.domainNo,
-                        standards: {}
-                    };
-                }
-                const stdKey = `${item.standardNo}-${item.standardName}`;
-                if (!domainGroups[item.domainName].standards[stdKey]) {
-                    domainGroups[item.domainName].standards[stdKey] = {
-                        standardNo: item.standardNo,
-                        standardName: item.standardName,
-                        scores: []
-                    };
-                }
-                domainGroups[item.domainName].standards[stdKey].scores.push(item.score);
-            });
+            if (!jsonData || jsonData.length === 0) throw new Error("الملف فارغ أو غير قابل للقراءة.");
 
-            // Create grid of tables
-            let tablesHTML = '<div class="compliance-tables-grid">';
-
-            // Sort domains by domain number
-            const sortedDomains = Object.keys(domainGroups).sort((a, b) => {
-                return domainGroups[a].domainNo - domainGroups[b].domainNo;
-            });
-
-            sortedDomains.forEach(domainName => {
-                const domain = domainGroups[domainName];
-
-                tablesHTML += `
-                    <div class="compliance-domain-table">
-                        <div class="compliance-domain-header">${domainName}</div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>رقم</th>
-                                    <th>اسم المعيار</th>
-                                    <th>الدرجة</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                `;
-
-                // Sort standards by number
-                const sortedStandards = Object.keys(domain.standards).sort((a, b) => {
-                    const numA = parseFloat(domain.standards[a].standardNo);
-                    const numB = parseFloat(domain.standards[b].standardNo);
-                    return numA - numB;
-                });
-
-                sortedStandards.forEach(stdKey => {
-                    const standard = domain.standards[stdKey];
-                    const avg = calculateAverage(standard.scores);
-
-                    // Determine status color based on average
-                    let statusClass = 'status-black';
-                    if (avg > 2.49) {
-                        statusClass = 'status-green';
-                    } else if (avg < 1.49 && avg > 0) {
-                        statusClass = 'status-red';
-                    } else if (avg >= 1.49 && avg <= 2.49) {
-                        statusClass = 'status-orange';
+            const getHeadersFromSheet = (ws) => {
+                const headers = [];
+                if (!ws['!ref']) return [];
+                const range = XLSX.utils.decode_range(ws['!ref']);
+                const R = range.s.r; // First row index
+                for (let C = range.s.c; C <= range.e.c; ++C) {
+                    const cell = ws[XLSX.utils.encode_cell({c: C, r: R})];
+                    const headerText = cell ? XLSX.utils.format_cell(cell) : ''; 
+                    if (headerText) {
+                        headers.push(headerText.trim());
                     }
-
-                    tablesHTML += `
-                        <tr>
-                            <td>${standard.standardNo}</td>
-                            <td>${standard.standardName}</td>
-                            <td>
-                                <span class="status-indicator ${statusClass}"></span>
-                                ${avg > 0 ? avg.toFixed(1) : '-'}
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                tablesHTML += `
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            });
-
-            tablesHTML += '</div>';
-
-            container.innerHTML = tablesHTML;
-        }
-
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.add('hidden');
-            });
-
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            const tabs = {
-                'data': 'dataTab',
-                'domainResults': 'domainResultsTab',
-                'standardResults': 'standardResultsTab',
-                'notes': 'notesTab',
-                'summary': 'summaryTab'
+                }
+                return headers;
+            }
+            const fileHeaders = getHeadersFromSheet(worksheet);
+            
+            const headerMapping = {};
+            const APP_SCHEMA = {
+              domain: ['المجال', 'domain'],
+              principle: ['المبدأ', 'principle'],
+              standardNo: ['المعيار', 'standardno', 'standard number',  'standard', 'رقم المعيار' ],
+              standardName: ['اسم المعيار', 'standardname', 'standard name'],
+              standardText: ['نص المعيار', 'standardtext', 'standard text'],
+              evidence: ['الأدلة والشواهد', 'evidence', 'evidences'],
+              evaluation: ['التقييم', 'evaluation', 'rating'],
+              score: ['الدرجة', 'score'],
+              notes: ['الملاحظات', 'notes', 'comments', 'ملاحظات', 'ملاحظة', 'ملاحظه', 'الملاحظه', 'تعليقات', 'التعليقات'],
+              recommendation: ['التوصيات', 'recommendation', 'recommendations', 'توصيات', 'توصية', 'توصيه', 'التوصيه', 'مقترحات', 'المقترحات'],
+              completed: ['اكتمل', 'completed', 'status', 'الحالة']
             };
 
-            document.getElementById(tabs[tabName]).classList.remove('hidden');
-            event.target.classList.add('active');
-
-            if (tabName === 'domainResults') {
-                setTimeout(() => renderDomainResults(), 100);
+            for (const internalField in APP_SCHEMA) {
+                const possibleHeaders = APP_SCHEMA[internalField];
+                const foundHeader = fileHeaders.find(h => possibleHeaders.includes(h.toLowerCase().trim()));
+                if (foundHeader) headerMapping[internalField] = foundHeader;
             }
-        }
 
-        // Export to Excel
-        function exportToExcel() {
-            const wb = XLSX.utils.book_new();
+            const normalizedData = jsonData.map((row, index) => {
+                 const rawCompleted = String(row[headerMapping.completed] || '').toLowerCase().trim();
+                 const isCompleted = ['true', 'yes', 'نعم', '1'].includes(rawCompleted);
+                
+                const mappedRow = {
+                    id: Date.now() + index, 
+                    domain: (row[headerMapping.domain] || '').trim(),
+                    principle: (row[headerMapping.principle] || '').trim(), 
+                    standardNo: String(row[headerMapping.standardNo] || '').trim(),
+                    standardName: (row[headerMapping.standardName] || '').trim(), 
+                    standardText: (row[headerMapping.standardText] || '').trim(),
+                    evidence: (row[headerMapping.evidence] || '').trim(), 
+                    notes: String(row[headerMapping.notes] || '').trim(),
+                    recommendation: String(row[headerMapping.recommendation] || '').trim(), 
+                    score: 0, 
+                    evaluation: 'خارج النطاق',
+                    completed: isCompleted
+                };
 
-            // Data sheet
-            const dataForExport = allData.map(item => ({
-                'الرقم': item.id,
-                'المجال': item.domainName,
-                'المبدأ': item.principleName,
-                'رقم المعيار': item.standardNo,
-                'اسم المعيار': item.standardName,
-                'نص المعيار': item.standardText,
-                'الأدلة': item.evidence,
-                'التقييم': item.assessment,
-                'الدرجة': item.score,
-                'الملاحظات': item.notes,
-                'التوصية': item.recommendation
-            }));
-
-            const ws1 = XLSX.utils.json_to_sheet(dataForExport);
-            XLSX.utils.book_append_sheet(wb, ws1, 'البيانات');
-
-            // Standards summary sheet
-            const standardGroups = {};
-            allData.forEach(item => {
-                const key = `${item.standardNo}-${item.standardName}`;
-                if (!standardGroups[key]) {
-                    standardGroups[key] = {
-                        standardNo: item.standardNo,
-                        standardName: item.standardName,
-                        scores: []
-                    };
+                const rawEvaluation = row[headerMapping.evaluation];
+                const rawScore = row[headerMapping.score];
+                if (rawEvaluation && evaluationMap[rawEvaluation.trim()] !== undefined) {
+                    mappedRow.score = evaluationMap[rawEvaluation.trim()];
+                    mappedRow.evaluation = rawEvaluation.trim();
+                } else if (rawScore !== undefined && scoreMap[parseInt(rawScore, 10)]) {
+                    mappedRow.score = parseInt(rawScore, 10);
+                    mappedRow.evaluation = scoreMap[mappedRow.score];
                 }
-                standardGroups[key].scores.push(item.score);
+                return mappedRow;
+            });
+            setData(normalizedData);
+        } catch (error) {
+            console.error("Error parsing file:", error);
+            alert("حدث خطأ أثناء قراءة الملف. يرجى التأكد من أن الملف صحيح (CSV, XLSX, XLS) وأن الأعمدة المطلوبة موجودة.");
+        } finally {
+            setTimeout(() => setIsLoading(false), 300);
+            if(event.target) event.target.value = '';
+        }
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  const calculateAverage = (items) => {
+    const validItems = items.filter(item => item.score > 0);
+    if (validItems.length === 0) return 0;
+    return validItems.reduce((acc, item) => acc + item.score, 0) / validItems.length;
+  };
+  
+  const processedData = useMemo(() => {
+    const result = {};
+    domainOrder.forEach(domain => {
+        const domainItems = data.filter(item => item.domain === domain);
+        if (!domainItems.length) return;
+
+        const principlesInOrder = [];
+        domainItems.forEach(item => {
+            if (!principlesInOrder.includes(item.principle)) {
+                principlesInOrder.push(item.principle);
+            }
+        });
+        
+        result[domain] = {
+            principles: principlesInOrder.map(principle => ({
+              name: principle,
+              averageScore: calculateAverage(domainItems.filter(item => item.principle === principle))
+            })),
+            items: domainItems
+        };
+    });
+    return result;
+  }, [data]);
+  
+  const aggregatedNotes = useMemo(() => {
+    const groups = {};
+    data.forEach(item => {
+      const groupKey = `${item.standardNo}||${item.standardName}`;
+      if (!groups[groupKey]) {
+        groups[groupKey] = {
+          ...item, items: [], notes: [], recommendations: []
+        };
+      }
+      groups[groupKey].items.push(item);
+      if (item.notes) groups[groupKey].notes.push(item.notes);
+      if (item.recommendation) groups[groupKey].recommendations.push(item.recommendation);
+    });
+    Object.keys(groups).forEach(key => {
+        groups[key].averageScore = calculateAverage(groups[key].items);
+    });
+    return groups;
+  }, [data]);
+
+  const saveToExcel = () => {
+    // ورقة 1: بيانات التقييم
+    const exportData = data.map(item => ({
+        'المجال': item.domain, 'المبدأ': item.principle, 'المعيار': item.standardNo,
+        'اسم المعيار': item.standardName, 'نص المعيار': item.standardText, 'الأدلة والشواهد': item.evidence,
+        'التقييم': item.evaluation, 'الدرجة': item.score, 'الملاحظات': item.notes, 'التوصيات': item.recommendation,
+        'اكتمل': item.completed ? 'نعم' : 'لا'
+    }));
+    const ws1 = XLSX.utils.json_to_sheet(exportData);
+
+    // ورقة 2: نتائج التقييم التفصيلي
+    const detailedResultsData = [];
+    domainOrder.forEach(domain => {
+        if (!processedData[domain] || !processedData[domain].items) return;
+        const domainItems = processedData[domain].items;
+        const principlesInOrder = [...new Set(domainItems.map(item => item.principle))];
+
+        principlesInOrder.forEach(principle => {
+            const principleItems = domainItems.filter(item => item.principle === principle);
+            const standards = {};
+            principleItems.forEach(item => {
+                const groupKey = `${item.standardNo}||${item.standardName}`;
+                if (!standards[groupKey]) {
+                    standards[groupKey] = { items: [], standardNo: item.standardNo, standardName: item.standardName };
+                }
+                standards[groupKey].items.push(item);
             });
 
-            const standardsData = Object.keys(standardGroups).map(key => {
-                const group = standardGroups[key];
-                const avg = calculateAverage(group.scores);
-                return {
+            Object.keys(standards).sort(sortStandards).forEach(groupKey => {
+                const group = standards[groupKey];
+                const average = calculateAverage(group.items);
+                detailedResultsData.push({
+                    'المجال': domain,
+                    'المبدأ': principle,
                     'رقم المعيار': group.standardNo,
                     'اسم المعيار': group.standardName,
-                    'المتوسط': avg.toFixed(2),
-                    'عدد البنود': group.scores.length
-                };
-            });
-
-            const ws2 = XLSX.utils.json_to_sheet(standardsData);
-            XLSX.utils.book_append_sheet(wb, ws2, 'ملخص المعايير');
-
-            // Notes sheet
-            const notesGroups = {};
-            allData.forEach(item => {
-                const key = `${item.standardNo}-${item.standardName}`;
-                if (!notesGroups[key]) {
-                    notesGroups[key] = {
-                        standardNo: item.standardNo,
-                        standardName: item.standardName,
-                        standardText: item.standardText,
-                        scores: [],
-                        notes: [],
-                        recommendations: []
-                    };
-                }
-                notesGroups[key].scores.push(item.score);
-                if (item.notes && item.notes.trim()) {
-                    notesGroups[key].notes.push(item.notes);
-                }
-                if (item.recommendation && item.recommendation.trim()) {
-                    notesGroups[key].recommendations.push(item.recommendation);
-                }
-            });
-
-            const notesData = Object.keys(notesGroups)
-                .filter(k => notesGroups[k].notes.length > 0 || notesGroups[k].recommendations.length > 0)
-                .map(key => {
-                    const group = notesGroups[key];
-                    const avg = calculateAverage(group.scores);
-                    return {
-                        'المعيار': group.standardNo,
-                        'نص المعيار': group.standardText,
-                        'التقييم': avg.toFixed(1),
-                        'الملاحظة': group.notes.join(' | '),
-                        'التوصية': group.recommendations.join(' | ')
-                    };
+                    'متوسط التقييم': average.toFixed(2),
                 });
-
-            const ws3 = XLSX.utils.json_to_sheet(notesData);
-            XLSX.utils.book_append_sheet(wb, ws3, 'الملاحظات المجمعة');
-
-            XLSX.writeFile(wb, 'تقييم_المعايير.xlsx');
-        }
-
-        // Export to Word (HTML format)
-        function exportToWord() {
-            let content = `
-                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-                <head><meta charset='utf-8'><title>تقييم المعايير</title>
-                <style>
-                    body { font-family: 'Arial', sans-serif; direction: rtl; }
-                    table { border-collapse: collapse; width: 100%; margin: 20px 0; }
-                    th, td { border: 1px solid black; padding: 8px; text-align: right; }
-                    th { background-color: #f59e0b; color: white; font-weight: bold; }
-                    h1, h2 { text-align: center; }
-                </style>
-                </head>
-                <body>
-                <h1>نظام تقييم المعايير التفصيلية - IIA 2025</h1>
-                <h2>جدول التقييمات</h2>
-                <table>
-                    <tr>
-                        <th>الرقم</th>
-                        <th>المجال</th>
-                        <th>المبدأ</th>
-                        <th>المعيار</th>
-                        <th>الدرجة</th>
-                        <th>الملاحظات</th>
-                        <th>التوصية</th>
-                    </tr>
-            `;
-
-            allData.forEach((item, index) => {
-                content += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${item.domainName}</td>
-                        <td>${item.principleName}</td>
-                        <td>${item.standardNo} - ${item.standardName}</td>
-                        <td>${item.score}</td>
-                        <td>${item.notes || ''}</td>
-                        <td>${item.recommendation || ''}</td>
-                    </tr>
-                `;
             });
-
-            content += `</table></body></html>`;
-
-            const blob = new Blob(['\ufeff', content], {
-                type: 'application/msword'
-            });
-
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'تقييم_المعايير.doc';
-            link.click();
-        }
-
-        // Load sample data from URL on page load
-        window.addEventListener('load', () => {
-            fetch('https://pfst.cf2.poecdn.net/base/application/5a45eb3546e6d87e2d1b9a36b9a6306c9bc006fa8b1561cc38c6ec6704df4df7')
-                .then(response => response.arrayBuffer())
-                .then(data => {
-                    const workbook = XLSX.read(data, {type: 'array'});
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-
-                    allData = jsonData.map((row, index) => ({
-                        id: row['Id'] || index + 1,
-                        domainNo: row['DomainNo'],
-                        domainName: row['DomainName'],
-                        principleNo: row['PrincipleNo'],
-                        principleName: row['PrincipleName'],
-                        standardNo: row['StandardNo'],
-                        standardName: row['StandardName'],
-                        standardText: row['StandardText'] || '',
-                        evidence: row['الأدلة الدالة على لتنفيذ'] || '',
-                        assessment: row['التقييم'] || '',
-                        score: row['الدرجة'] || 0,
-                        notes: row['الملاحظات'] || '',
-                        recommendation: row['التوصية'] || ''
-                    }));
-
-                    filteredData = [...allData];
-                    populateFilters();
-                    renderTable();
-                    renderDomainResults();
-                    renderStandardResults();
-                    renderNotes();
-                    renderSummary();
-                })
-                .catch(err => console.error('Error loading data:', err));
         });
-    </script>
+    });
+    const ws2 = XLSX.utils.json_to_sheet(detailedResultsData);
+
+    // ورقة 3: ملخص نتائج المجالات (بيانات الرسوم البيانية)
+    const chartDataForExport = [];
+    Object.entries(processedData).forEach(([domain, domainData]) => {
+        if (domainData && domainData.principles) {
+            domainData.principles.forEach(principle => {
+                chartDataForExport.push({
+                    'المجال': domain,
+                    'المبدأ': principle.name,
+                    'متوسط الدرجة': principle.averageScore.toFixed(2),
+                });
+            });
+        }
+    });
+    const ws3 = XLSX.utils.json_to_sheet(chartDataForExport);
+    
+    // ورقة 4: الملاحظات والتوصيات المجمعة
+    const aggregatedNotesData = Object.values(aggregatedNotes).map((group) => ({
+        'المعيار': group.standardNo, 'اسم المعيار': group.standardName, 'نص المعيار': group.standardText,
+        'متوسط درجة التقييم': group.averageScore.toFixed(2),
+        'الملاحظات': group.notes.join('\n---\n'), 'التوصيات': group.recommendations.join('\n---\n'),
+    }));
+    const ws4 = XLSX.utils.json_to_sheet(aggregatedNotesData);
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws1, "بيانات التقييم");
+    XLSX.utils.book_append_sheet(wb, ws2, "نتائج التقييم التفصيلي");
+    XLSX.utils.book_append_sheet(wb, ws3, "ملخص نتائج المجالات");
+    XLSX.utils.book_append_sheet(wb, ws4, "الملاحظات والتوصيات المجمعة");
+    XLSX.writeFile(wb, "بيانات_التقييم_المحفوظة.xlsx");
+  };
 
 
+  const exportToWord = () => {
+      let htmlContent = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head><meta charset='utf-8'><title>Export HTML To Doc</title>
+        <style> body { font-family: 'Arial', sans-serif; direction: rtl; } table { border-collapse: collapse; width: 100%; } th, td { border: 1px solid #dddddd; text-align: right; padding: 8px; } th { background-color: #f59e0b; color: white; } </style>
+        </head><body><h1>ملخص الملاحظات والتوصيات</h1>
+        <table><thead><tr><th>المعيار</th><th>اسم المعيار</th><th>نص المعيار</th><th>متوسط التقييم</th><th>الملاحظات</th><th>التوصيات</th></tr></thead><tbody>`;
+      Object.values(aggregatedNotes).forEach((group) => {
+          htmlContent += `<tr><td>${group.standardNo}</td><td>${group.standardName}</td><td>${group.standardText}</td><td>${group.averageScore.toFixed(2)}</td><td>${group.notes.join('<br>')}</td><td>${group.recommendations.join('<br>')}</td></tr>`;
+      });
+      htmlContent += "</tbody></table></body></html>";
+      const url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(htmlContent);
+      const downloadLink = document.createElement("a");
+      document.body.appendChild(downloadLink);
+      downloadLink.href = url;
+      downloadLink.download = 'تقرير_التدقيق.doc';
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+  };
 
-</body></html>
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'data': return <DataView data={data} onDataChange={handleDataChange} />;
+      case 'results': return <ChartsView processedData={processedData} isDarkMode={isDarkMode} />;
+      case 'details': return <DetailedResultsView processedData={processedData} />;
+      case 'notes': return <AggregatedNotesView aggregatedNotes={aggregatedNotes} />;
+      default: return null;
+    }
+  };
+  
+  return (
+    <div className="container">
+      <Header
+        onFileChange={handleFileChange}
+        onSaveToExcel={saveToExcel}
+        onExportWord={exportToWord}
+        onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+        isLoading={isLoading}
+        isDarkMode={isDarkMode}
+      />
+      <main>
+        <Tabs activeTab={activeTab} onTabClick={setActiveTab} />
+        <div className="tab-content">
+          {renderTabContent()}
+        </div>
+      </main>
+    </div>
+  );
+};
+
+const rootElement = document.getElementById('root');
+if (rootElement) {
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(
+        <React.StrictMode>
+            <App />
+        </React.StrictMode>
+    );
+}
+  </script>
+</body>
+
+</html>
