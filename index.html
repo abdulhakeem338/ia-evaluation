@@ -1,0 +1,1197 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta name="x-poe-datastore-behavior" content="local_only">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام تقييم المعايير - IIA 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+
+        * {
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        body.dark {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .container-glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .dark .container-glass {
+            background: rgba(30, 30, 46, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .score-0 { background-color: #e5e7eb !important; color: #6b7280; }
+        .score-1 { background-color: #fecaca !important; color: #991b1b; }
+        .score-2 { background-color: #fcd34d !important; color: #78350f; }
+        .score-3 { background-color: #86efac !important; color: #14532d; }
+
+        .tab-button {
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-button.active {
+            border-bottom-color: #5D5CDE;
+            background: linear-gradient(135deg, rgba(93, 92, 222, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        }
+
+        .filter-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .table-row:hover {
+            background-color: rgba(93, 92, 222, 0.05);
+            transform: scale(1.001);
+            transition: all 0.2s ease;
+        }
+
+        textarea, select, input {
+            font-size: 16px !important;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 2rem auto;
+            max-width: 500px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .dark .stat-card {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .notes-table {
+            font-size: 0.75rem;
+            border-collapse: collapse;
+        }
+
+        .notes-table th {
+            background-color: #f59e0b;
+            color: white;
+            padding: 0.5rem;
+            border: 1px solid #d97706;
+            font-weight: bold;
+            resize: horizontal;
+            overflow: auto;
+            position: relative;
+        }
+
+        .notes-table td {
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            vertical-align: top;
+        }
+
+        .notes-table col {
+            resize: horizontal;
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .summary-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .summary-table th {
+            background-color: #78716c;
+            color: white;
+            padding: 0.75rem;
+            border: 1px solid #57534e;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .summary-table td {
+            padding: 0.5rem;
+            border: 1px solid #d6d3d1;
+            text-align: right;
+        }
+
+        .summary-table .domain-header {
+            background-color: #fbbf24;
+            color: #78350f;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .summary-table .principle-header {
+            background-color: #d4d4d4;
+            font-weight: bold;
+        }
+
+        .avg-green {
+            background-color: #86efac !important;
+            color: #14532d !important;
+            font-weight: bold;
+        }
+
+        .avg-orange {
+            background-color: #fcd34d !important;
+            color: #78350f !important;
+            font-weight: bold;
+        }
+
+        .avg-red {
+            background-color: #fecaca !important;
+            color: #991b1b !important;
+            font-weight: bold;
+        }
+
+        .compliance-summary-section {
+            margin: 30px 0;
+        }
+
+        .compliance-tables-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            padding: 20px;
+        }
+
+        .compliance-domain-table {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .compliance-domain-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .compliance-domain-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .compliance-domain-table th {
+            background: #f8f9fa;
+            padding: 10px 8px;
+            text-align: center;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 0.9em;
+        }
+
+        .compliance-domain-table td {
+            padding: 8px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.85em;
+        }
+
+        .compliance-domain-table td:nth-child(1) {
+            text-align: center;
+            font-weight: 600;
+            width: 15%;
+        }
+
+        .compliance-domain-table td:nth-child(2) {
+            text-align: right;
+            padding-right: 12px;
+            width: 60%;
+        }
+
+        .compliance-domain-table td:nth-child(3) {
+            font-weight: 600;
+            width: 25%;
+        }
+
+        .compliance-domain-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .status-green {
+            background: #28a745;
+        }
+
+        .status-orange {
+            background: #ffc107;
+        }
+
+        .status-red {
+            background: #dc3545;
+        }
+
+        .status-black {
+            background: #000000;
+        }
+    </style>
+<script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.3f7572448765332f3047.js"></script></head>
+<body class="p-4">
+    <div class="container mx-auto max-w-7xl">
+        <!-- Header -->
+        <div class="container-glass rounded-3xl p-6 mb-6">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                    <h1 class="text-4xl font-bold text-gray-800 dark:text-white mb-2">
+                        نظام تقييم المعايير التفصيلية
+                    </h1>
+                    <p class="text-gray-600 dark:text-gray-300">التدقيق الداخلي (IIA 2025)</p>
+                </div>
+                <div class="flex gap-3 flex-wrap">
+                    <label class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-3 rounded-xl cursor-pointer hover:shadow-lg transition-all font-bold">
+                        📁 تحميل ملف Excel
+                        <input type="file" id="fileInput" accept=".xlsx,.xls" class="hidden">
+                    </label>
+                    <button onclick="exportToExcel()" class="export-btn">
+                        📊 تصدير إلى Excel
+                    </button>
+                    <button onclick="exportToWord()" class="export-btn" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+                        📄 تصدير إلى Word
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="container-glass rounded-3xl p-6 mb-6" id="filtersSection">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">🔍 الفلاتر</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-gray-700 dark:text-gray-300 font-semibold mb-2">المجال</label>
+                    <select id="domainFilter" class="w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <option value="">الكل</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700 dark:text-gray-300 font-semibold mb-2">المبدأ</label>
+                    <select id="principleFilter" class="w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <option value="">الكل</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700 dark:text-gray-300 font-semibold mb-2">المعيار</label>
+                    <select id="standardFilter" class="w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <option value="">الكل</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex gap-3 mt-4 flex-wrap" id="activeFilters"></div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="container-glass rounded-t-3xl p-2 mb-0">
+            <div class="flex gap-2 overflow-x-auto scrollbar-hide">
+                <button class="tab-button active px-6 py-3 rounded-xl font-bold text-gray-700 dark:text-gray-300 whitespace-nowrap" onclick="switchTab('data')">
+                    📊 البيانات والتقييم
+                </button>
+                <button class="tab-button px-6 py-3 rounded-xl font-bold text-gray-700 dark:text-gray-300 whitespace-nowrap" onclick="switchTab('domainResults')">
+                    📈 نتائج المجالات
+                </button>
+                <button class="tab-button px-6 py-3 rounded-xl font-bold text-gray-700 dark:text-gray-300 whitespace-nowrap" onclick="switchTab('standardResults')">
+                    📋 نتائج المعايير
+                </button>
+                <button class="tab-button px-6 py-3 rounded-xl font-bold text-gray-700 dark:text-gray-300 whitespace-nowrap" onclick="switchTab('notes')">
+                    📝 الملاحظات المجمعة
+                </button>
+                <button class="tab-button px-6 py-3 rounded-xl font-bold text-gray-700 dark:text-gray-300 whitespace-nowrap" onclick="switchTab('summary')">
+                    📑 ملخص التوافق
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="container-glass rounded-b-3xl rounded-t-none p-6">
+            <!-- Data Tab -->
+            <div id="dataTab" class="tab-content">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm" id="dataTable">
+                        <thead class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white sticky top-0">
+                            <tr>
+                                <th class="px-4 py-3 text-right font-bold">#</th>
+                                <th class="px-4 py-3 text-right font-bold">المجال</th>
+                                <th class="px-4 py-3 text-right font-bold">المبدأ</th>
+                                <th class="px-4 py-3 text-right font-bold">المعيار</th>
+                                <th class="px-4 py-3 text-right font-bold">نص المعيار</th>
+                                <th class="px-4 py-3 text-right font-bold">الأدلة</th>
+                                <th class="px-4 py-3 text-right font-bold">التقييم</th>
+                                <th class="px-4 py-3 text-right font-bold">الملاحظات</th>
+                                <th class="px-4 py-3 text-right font-bold">التوصية</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Domain Results Tab -->
+            <div id="domainResultsTab" class="tab-content hidden">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">
+                    الرسوم البيانية الإشعاعية للمجالات
+                </h2>
+                <div id="radarChartsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+            </div>
+
+            <!-- Standard Results Tab -->
+            <div id="standardResultsTab" class="tab-content hidden">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6">نتائج المعايير</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
+                            <tr>
+                                <th class="px-4 py-3 text-right font-bold">رقم المعيار</th>
+                                <th class="px-4 py-3 text-right font-bold">اسم المعيار</th>
+                                <th class="px-4 py-3 text-right font-bold">المتوسط</th>
+                                <th class="px-4 py-3 text-right font-bold">عدد البنود</th>
+                                <th class="px-4 py-3 text-right font-bold">التوزيع</th>
+                            </tr>
+                        </thead>
+                        <tbody id="standardResultsBody" class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Notes Tab -->
+            <div id="notesTab" class="tab-content hidden">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6">الملاحظات المجمعة حسب المعيار</h2>
+                <div id="notesContainer" class="overflow-x-auto">
+                </div>
+            </div>
+
+            <!-- Summary Tab -->
+            <div id="summaryTab" class="tab-content hidden">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">
+                    ملخص التوافق مع المعايير التفصيلية للتدقيق الداخلي
+                </h2>
+                <div id="summaryContainer" class="overflow-x-auto">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode detection
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        let allData = [];
+        let filteredData = [];
+        let radarChartInstances = [];
+
+        // File upload handler
+        document.getElementById('fileInput').addEventListener('change', handleFile);
+
+        function handleFile(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+                allData = jsonData.map((row, index) => ({
+                    id: row['Id'] || index + 1,
+                    domainNo: row['DomainNo'],
+                    domainName: row['DomainName'],
+                    principleNo: row['PrincipleNo'],
+                    principleName: row['PrincipleName'],
+                    standardNo: row['StandardNo'],
+                    standardName: row['StandardName'],
+                    standardText: row['StandardText'] || '',
+                    evidence: row['الأدلة الدالة على لتنفيذ'] || '',
+                    assessment: row['التقييم'] || '',
+                    score: row['الدرجة'] || 0,
+                    notes: row['الملاحظات'] || '',
+                    recommendation: row['التوصية'] || ''
+                }));
+
+                filteredData = [...allData];
+                populateFilters();
+                renderTable();
+                renderDomainResults();
+                renderStandardResults();
+                renderNotes();
+                renderSummary();
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Calculate average excluding zeros
+        function calculateAverage(scores) {
+            const nonZeroScores = scores.filter(s => s !== 0);
+            if (nonZeroScores.length === 0) return 0;
+            return nonZeroScores.reduce((a, b) => a + b, 0) / nonZeroScores.length;
+        }
+
+        // Populate filter dropdowns
+        function populateFilters() {
+            const domains = [...new Set(allData.map(item => item.domainName))].filter(Boolean);
+            const principles = [...new Set(allData.map(item => item.principleName))].filter(Boolean);
+            const standards = [...new Set(allData.map(item => item.standardName))].filter(Boolean);
+
+            const domainSelect = document.getElementById('domainFilter');
+            const principleSelect = document.getElementById('principleFilter');
+            const standardSelect = document.getElementById('standardFilter');
+
+            domainSelect.innerHTML = '<option value="">الكل</option>';
+            principleSelect.innerHTML = '<option value="">الكل</option>';
+            standardSelect.innerHTML = '<option value="">الكل</option>';
+
+            domains.forEach(domain => {
+                domainSelect.innerHTML += `<option value="${domain}">${domain}</option>`;
+            });
+
+            principles.forEach(principle => {
+                principleSelect.innerHTML += `<option value="${principle}">${principle}</option>`;
+            });
+
+            standards.forEach(standard => {
+                standardSelect.innerHTML += `<option value="${standard}">${standard}</option>`;
+            });
+
+            domainSelect.addEventListener('change', applyFilters);
+            principleSelect.addEventListener('change', applyFilters);
+            standardSelect.addEventListener('change', applyFilters);
+        }
+
+        function applyFilters() {
+            const domainFilter = document.getElementById('domainFilter').value;
+            const principleFilter = document.getElementById('principleFilter').value;
+            const standardFilter = document.getElementById('standardFilter').value;
+
+            filteredData = allData.filter(item => {
+                return (!domainFilter || item.domainName === domainFilter) &&
+                       (!principleFilter || item.principleName === principleFilter) &&
+                       (!standardFilter || item.standardName === standardFilter);
+            });
+
+            updateActiveFilters();
+            renderTable();
+            renderDomainResults();
+            renderStandardResults();
+            renderNotes();
+            renderSummary();
+        }
+
+        function updateActiveFilters() {
+            const container = document.getElementById('activeFilters');
+            const domainFilter = document.getElementById('domainFilter').value;
+            const principleFilter = document.getElementById('principleFilter').value;
+            const standardFilter = document.getElementById('standardFilter').value;
+
+            let html = '';
+            if (domainFilter) html += `<span class="filter-badge">المجال: ${domainFilter}</span>`;
+            if (principleFilter) html += `<span class="filter-badge">المبدأ: ${principleFilter}</span>`;
+            if (standardFilter) html += `<span class="filter-badge">المعيار: ${standardFilter}</span>`;
+
+            container.innerHTML = html;
+        }
+
+        function getScoreClass(score) {
+            return `score-${score}`;
+        }
+
+        function getScoreLabel(score) {
+            const labels = {
+                0: 'خارج النطاق',
+                1: 'غير مطابق',
+                2: 'جزئي',
+                3: 'كلي'
+            };
+            return labels[score] || '';
+        }
+
+        function getAvgClass(avg) {
+            if (avg > 2.49) return 'avg-green';
+            if (avg < 1.49) return 'avg-red';
+            return 'avg-orange';
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            filteredData.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.className = 'table-row border-b border-gray-200 dark:border-gray-700';
+                row.innerHTML = `
+                    <td class="px-4 py-3">${index + 1}</td>
+                    <td class="px-4 py-3 font-semibold">${item.domainName || ''}</td>
+                    <td class="px-4 py-3">${item.principleName || ''}</td>
+                    <td class="px-4 py-3 font-semibold">${item.standardNo || ''} - ${item.standardName || ''}</td>
+                    <td class="px-4 py-3 text-xs max-w-xs" title="${item.standardText}">${item.standardText.substring(0, 100)}${item.standardText.length > 100 ? '...' : ''}</td>
+                    <td class="px-4 py-3 text-xs max-w-xs" title="${item.evidence}">${item.evidence.substring(0, 80)}${item.evidence.length > 80 ? '...' : ''}</td>
+                    <td class="px-4 py-3">
+                        <select
+                            class="px-3 py-2 rounded-full font-bold ${getScoreClass(item.score)}"
+                            onchange="updateScore(${item.id}, this.value)"
+                        >
+                            <option value="0" ${item.score === 0 ? 'selected' : ''}>0</option>
+                            <option value="1" ${item.score === 1 ? 'selected' : ''}>1</option>
+                            <option value="2" ${item.score === 2 ? 'selected' : ''}>2</option>
+                            <option value="3" ${item.score === 3 ? 'selected' : ''}>3</option>
+                        </select>
+                        <div class="mt-1 text-xs text-center">
+                            <span class="px-2 py-1 rounded ${getScoreClass(item.score)}">
+                                ${getScoreLabel(item.score)}
+                            </span>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <textarea
+                            class="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            rows="2"
+                            data-id="${item.id}"
+                            onchange="updateNotes(${item.id}, this.value)"
+                        >${item.notes || ''}</textarea>
+                    </td>
+                    <td class="px-4 py-3">
+                        <textarea
+                            class="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            rows="2"
+                            data-id="${item.id}"
+                            onchange="updateRecommendation(${item.id}, this.value)"
+                        >${item.recommendation || ''}</textarea>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateAssessment(id, value) {
+            const item = allData.find(i => i.id === id);
+            if (item) {
+                item.assessment = value;
+                renderNotes();
+            }
+        }
+
+        function updateScore(id, value) {
+            const item = allData.find(i => i.id === id);
+            if (item) {
+                item.score = parseInt(value);
+                renderTable();
+                renderDomainResults();
+                renderStandardResults();
+                renderNotes();
+                renderSummary();
+            }
+        }
+
+        function updateNotes(id, value) {
+            const item = allData.find(i => i.id === id);
+            if (item) {
+                item.notes = value;
+                renderNotes();
+            }
+        }
+
+        function updateRecommendation(id, value) {
+            const item = allData.find(i => i.id === id);
+            if (item) {
+                item.recommendation = value;
+                renderNotes();
+            }
+        }
+
+        // Render domain results with radar charts for each domain
+        function renderDomainResults() {
+            const container = document.getElementById('radarChartsContainer');
+            container.innerHTML = '';
+
+            // Destroy old chart instances
+            radarChartInstances.forEach(chart => chart.destroy());
+            radarChartInstances = [];
+
+            // Group by domain
+            const domainGroups = {};
+            filteredData.forEach(item => {
+                if (!domainGroups[item.domainName]) {
+                    domainGroups[item.domainName] = {};
+                }
+                if (!domainGroups[item.domainName][item.principleName]) {
+                    domainGroups[item.domainName][item.principleName] = [];
+                }
+                domainGroups[item.domainName][item.principleName].push(item.score);
+            });
+
+            // Create a chart for each domain
+            Object.keys(domainGroups).forEach(domainName => {
+                const principles = domainGroups[domainName];
+                const labels = Object.keys(principles);
+                const averages = labels.map(label => calculateAverage(principles[label]));
+
+                const chartCard = document.createElement('div');
+                chartCard.className = 'bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg';
+                chartCard.innerHTML = `
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4 text-center">${domainName}</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-${domainName.replace(/\s+/g, '-')}"></canvas>
+                    </div>
+                `;
+                container.appendChild(chartCard);
+
+                const ctx = document.getElementById(`chart-${domainName.replace(/\s+/g, '-')}`);
+                const chart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'متوسط التقييم',
+                            data: averages,
+                            backgroundColor: 'rgba(93, 92, 222, 0.2)',
+                            borderColor: 'rgba(93, 92, 222, 1)',
+                            borderWidth: 3,
+                            pointBackgroundColor: 'rgba(93, 92, 222, 1)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(93, 92, 222, 1)',
+                            pointRadius: 6,
+                            pointHoverRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            r: {
+                                angleLines: { display: true },
+                                suggestedMin: 0,
+                                suggestedMax: 3,
+                                ticks: {
+                                    stepSize: 0.5,
+                                    font: { size: 12, family: 'Cairo' }
+                                },
+                                pointLabels: {
+                                    font: { size: 11, family: 'Cairo', weight: 'bold' }
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    font: { size: 14, family: 'Cairo', weight: 'bold' }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                radarChartInstances.push(chart);
+            });
+        }
+
+        function renderStandardResults() {
+            const standardGroups = {};
+
+            filteredData.forEach(item => {
+                const key = `${item.standardNo}-${item.standardName}`;
+                if (!standardGroups[key]) {
+                    standardGroups[key] = {
+                        standardNo: item.standardNo,
+                        standardName: item.standardName,
+                        scores: []
+                    };
+                }
+                standardGroups[key].scores.push(item.score);
+            });
+
+            const tbody = document.getElementById('standardResultsBody');
+            tbody.innerHTML = '';
+
+            Object.keys(standardGroups).forEach(key => {
+                const group = standardGroups[key];
+                const avg = calculateAverage(group.scores);
+                const total = group.scores.length;
+                const distribution = {
+                    0: group.scores.filter(s => s === 0).length,
+                    1: group.scores.filter(s => s === 1).length,
+                    2: group.scores.filter(s => s === 2).length,
+                    3: group.scores.filter(s => s === 3).length
+                };
+
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700';
+                row.innerHTML = `
+                    <td class="px-4 py-3 font-bold">${group.standardNo}</td>
+                    <td class="px-4 py-3">${group.standardName}</td>
+                    <td class="px-4 py-3">
+                        <span class="text-2xl font-bold ${avg >= 2.5 ? 'text-green-600' : avg >= 1.5 ? 'text-yellow-600' : 'text-red-600'}">
+                            ${avg.toFixed(2)}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-center font-semibold">${total}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1 items-center text-xs">
+                            ${distribution[3] > 0 ? `<span class="score-3 px-2 py-1 rounded">3: ${distribution[3]}</span>` : ''}
+                            ${distribution[2] > 0 ? `<span class="score-2 px-2 py-1 rounded">2: ${distribution[2]}</span>` : ''}
+                            ${distribution[1] > 0 ? `<span class="score-1 px-2 py-1 rounded">1: ${distribution[1]}</span>` : ''}
+                            ${distribution[0] > 0 ? `<span class="score-0 px-2 py-1 rounded">0: ${distribution[0]}</span>` : ''}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderNotes() {
+            const standardGroups = {};
+
+            filteredData.forEach(item => {
+                const key = `${item.standardNo}-${item.standardName}`;
+                if (!standardGroups[key]) {
+                    standardGroups[key] = {
+                        standardNo: item.standardNo,
+                        standardName: item.standardName,
+                        standardText: item.standardText,
+                        scores: [],
+                        notes: [],
+                        recommendations: []
+                    };
+                }
+                standardGroups[key].scores.push(item.score);
+                if (item.notes && item.notes.trim()) {
+                    standardGroups[key].notes.push(item.notes);
+                }
+                if (item.recommendation && item.recommendation.trim()) {
+                    standardGroups[key].recommendations.push(item.recommendation);
+                }
+            });
+
+            const container = document.getElementById('notesContainer');
+
+            let tableHTML = `
+                <table class="notes-table w-full">
+                    <colgroup>
+                        <col style="width: 8%;">
+                        <col style="width: 35%;">
+                        <col style="width: 6%;">
+                        <col style="width: 35%;">
+                        <col style="width: 16%;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>المعيار</th>
+                            <th>نص المعيار</th>
+                            <th>التقييم (3/1)</th>
+                            <th>الملاحظة</th>
+                            <th>التوصية</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            Object.keys(standardGroups).forEach(key => {
+                const group = standardGroups[key];
+                if (group.notes.length === 0 && group.recommendations.length === 0) return;
+
+                const avg = calculateAverage(group.scores);
+                const allNotes = group.notes.join(' | ');
+                const allRecommendations = group.recommendations.join(' | ');
+
+                tableHTML += `
+                    <tr>
+                        <td class="font-bold">${group.standardNo}</td>
+                        <td>${group.standardText}</td>
+                        <td class="text-center font-bold ${avg >= 2.5 ? 'text-green-600' : avg >= 1.5 ? 'text-yellow-600' : 'text-red-600'}">${avg.toFixed(1)}</td>
+                        <td>${allNotes}</td>
+                        <td>${allRecommendations}</td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+
+            if (Object.keys(standardGroups).filter(k => standardGroups[k].notes.length > 0 || standardGroups[k].recommendations.length > 0).length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-500 dark:text-gray-400 py-8">لا توجد ملاحظات أو توصيات متاحة</div>';
+            } else {
+                container.innerHTML = tableHTML;
+            }
+        }
+
+        function renderSummary() {
+            const container = document.getElementById('summaryContainer');
+
+            // Group data by domain and standard
+            const domainGroups = {};
+            filteredData.forEach(item => {
+                if (!domainGroups[item.domainName]) {
+                    domainGroups[item.domainName] = {
+                        domainNo: item.domainNo,
+                        standards: {}
+                    };
+                }
+                const stdKey = `${item.standardNo}-${item.standardName}`;
+                if (!domainGroups[item.domainName].standards[stdKey]) {
+                    domainGroups[item.domainName].standards[stdKey] = {
+                        standardNo: item.standardNo,
+                        standardName: item.standardName,
+                        scores: []
+                    };
+                }
+                domainGroups[item.domainName].standards[stdKey].scores.push(item.score);
+            });
+
+            // Create grid of tables
+            let tablesHTML = '<div class="compliance-tables-grid">';
+
+            // Sort domains by domain number
+            const sortedDomains = Object.keys(domainGroups).sort((a, b) => {
+                return domainGroups[a].domainNo - domainGroups[b].domainNo;
+            });
+
+            sortedDomains.forEach(domainName => {
+                const domain = domainGroups[domainName];
+
+                tablesHTML += `
+                    <div class="compliance-domain-table">
+                        <div class="compliance-domain-header">${domainName}</div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>رقم</th>
+                                    <th>اسم المعيار</th>
+                                    <th>الدرجة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                // Sort standards by number
+                const sortedStandards = Object.keys(domain.standards).sort((a, b) => {
+                    const numA = parseFloat(domain.standards[a].standardNo);
+                    const numB = parseFloat(domain.standards[b].standardNo);
+                    return numA - numB;
+                });
+
+                sortedStandards.forEach(stdKey => {
+                    const standard = domain.standards[stdKey];
+                    const avg = calculateAverage(standard.scores);
+
+                    // Determine status color based on average
+                    let statusClass = 'status-black';
+                    if (avg > 2.49) {
+                        statusClass = 'status-green';
+                    } else if (avg < 1.49 && avg > 0) {
+                        statusClass = 'status-red';
+                    } else if (avg >= 1.49 && avg <= 2.49) {
+                        statusClass = 'status-orange';
+                    }
+
+                    tablesHTML += `
+                        <tr>
+                            <td>${standard.standardNo}</td>
+                            <td>${standard.standardName}</td>
+                            <td>
+                                <span class="status-indicator ${statusClass}"></span>
+                                ${avg > 0 ? avg.toFixed(1) : '-'}
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                tablesHTML += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            });
+
+            tablesHTML += '</div>';
+
+            container.innerHTML = tablesHTML;
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            const tabs = {
+                'data': 'dataTab',
+                'domainResults': 'domainResultsTab',
+                'standardResults': 'standardResultsTab',
+                'notes': 'notesTab',
+                'summary': 'summaryTab'
+            };
+
+            document.getElementById(tabs[tabName]).classList.remove('hidden');
+            event.target.classList.add('active');
+
+            if (tabName === 'domainResults') {
+                setTimeout(() => renderDomainResults(), 100);
+            }
+        }
+
+        // Export to Excel
+        function exportToExcel() {
+            const wb = XLSX.utils.book_new();
+
+            // Data sheet
+            const dataForExport = allData.map(item => ({
+                'الرقم': item.id,
+                'المجال': item.domainName,
+                'المبدأ': item.principleName,
+                'رقم المعيار': item.standardNo,
+                'اسم المعيار': item.standardName,
+                'نص المعيار': item.standardText,
+                'الأدلة': item.evidence,
+                'التقييم': item.assessment,
+                'الدرجة': item.score,
+                'الملاحظات': item.notes,
+                'التوصية': item.recommendation
+            }));
+
+            const ws1 = XLSX.utils.json_to_sheet(dataForExport);
+            XLSX.utils.book_append_sheet(wb, ws1, 'البيانات');
+
+            // Standards summary sheet
+            const standardGroups = {};
+            allData.forEach(item => {
+                const key = `${item.standardNo}-${item.standardName}`;
+                if (!standardGroups[key]) {
+                    standardGroups[key] = {
+                        standardNo: item.standardNo,
+                        standardName: item.standardName,
+                        scores: []
+                    };
+                }
+                standardGroups[key].scores.push(item.score);
+            });
+
+            const standardsData = Object.keys(standardGroups).map(key => {
+                const group = standardGroups[key];
+                const avg = calculateAverage(group.scores);
+                return {
+                    'رقم المعيار': group.standardNo,
+                    'اسم المعيار': group.standardName,
+                    'المتوسط': avg.toFixed(2),
+                    'عدد البنود': group.scores.length
+                };
+            });
+
+            const ws2 = XLSX.utils.json_to_sheet(standardsData);
+            XLSX.utils.book_append_sheet(wb, ws2, 'ملخص المعايير');
+
+            // Notes sheet
+            const notesGroups = {};
+            allData.forEach(item => {
+                const key = `${item.standardNo}-${item.standardName}`;
+                if (!notesGroups[key]) {
+                    notesGroups[key] = {
+                        standardNo: item.standardNo,
+                        standardName: item.standardName,
+                        standardText: item.standardText,
+                        scores: [],
+                        notes: [],
+                        recommendations: []
+                    };
+                }
+                notesGroups[key].scores.push(item.score);
+                if (item.notes && item.notes.trim()) {
+                    notesGroups[key].notes.push(item.notes);
+                }
+                if (item.recommendation && item.recommendation.trim()) {
+                    notesGroups[key].recommendations.push(item.recommendation);
+                }
+            });
+
+            const notesData = Object.keys(notesGroups)
+                .filter(k => notesGroups[k].notes.length > 0 || notesGroups[k].recommendations.length > 0)
+                .map(key => {
+                    const group = notesGroups[key];
+                    const avg = calculateAverage(group.scores);
+                    return {
+                        'المعيار': group.standardNo,
+                        'نص المعيار': group.standardText,
+                        'التقييم': avg.toFixed(1),
+                        'الملاحظة': group.notes.join(' | '),
+                        'التوصية': group.recommendations.join(' | ')
+                    };
+                });
+
+            const ws3 = XLSX.utils.json_to_sheet(notesData);
+            XLSX.utils.book_append_sheet(wb, ws3, 'الملاحظات المجمعة');
+
+            XLSX.writeFile(wb, 'تقييم_المعايير.xlsx');
+        }
+
+        // Export to Word (HTML format)
+        function exportToWord() {
+            let content = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head><meta charset='utf-8'><title>تقييم المعايير</title>
+                <style>
+                    body { font-family: 'Arial', sans-serif; direction: rtl; }
+                    table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+                    th, td { border: 1px solid black; padding: 8px; text-align: right; }
+                    th { background-color: #f59e0b; color: white; font-weight: bold; }
+                    h1, h2 { text-align: center; }
+                </style>
+                </head>
+                <body>
+                <h1>نظام تقييم المعايير التفصيلية - IIA 2025</h1>
+                <h2>جدول التقييمات</h2>
+                <table>
+                    <tr>
+                        <th>الرقم</th>
+                        <th>المجال</th>
+                        <th>المبدأ</th>
+                        <th>المعيار</th>
+                        <th>الدرجة</th>
+                        <th>الملاحظات</th>
+                        <th>التوصية</th>
+                    </tr>
+            `;
+
+            allData.forEach((item, index) => {
+                content += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.domainName}</td>
+                        <td>${item.principleName}</td>
+                        <td>${item.standardNo} - ${item.standardName}</td>
+                        <td>${item.score}</td>
+                        <td>${item.notes || ''}</td>
+                        <td>${item.recommendation || ''}</td>
+                    </tr>
+                `;
+            });
+
+            content += `</table></body></html>`;
+
+            const blob = new Blob(['\ufeff', content], {
+                type: 'application/msword'
+            });
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'تقييم_المعايير.doc';
+            link.click();
+        }
+
+        // Load sample data from URL on page load
+        window.addEventListener('load', () => {
+            fetch('https://pfst.cf2.poecdn.net/base/application/5a45eb3546e6d87e2d1b9a36b9a6306c9bc006fa8b1561cc38c6ec6704df4df7')
+                .then(response => response.arrayBuffer())
+                .then(data => {
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+                    allData = jsonData.map((row, index) => ({
+                        id: row['Id'] || index + 1,
+                        domainNo: row['DomainNo'],
+                        domainName: row['DomainName'],
+                        principleNo: row['PrincipleNo'],
+                        principleName: row['PrincipleName'],
+                        standardNo: row['StandardNo'],
+                        standardName: row['StandardName'],
+                        standardText: row['StandardText'] || '',
+                        evidence: row['الأدلة الدالة على لتنفيذ'] || '',
+                        assessment: row['التقييم'] || '',
+                        score: row['الدرجة'] || 0,
+                        notes: row['الملاحظات'] || '',
+                        recommendation: row['التوصية'] || ''
+                    }));
+
+                    filteredData = [...allData];
+                    populateFilters();
+                    renderTable();
+                    renderDomainResults();
+                    renderStandardResults();
+                    renderNotes();
+                    renderSummary();
+                })
+                .catch(err => console.error('Error loading data:', err));
+        });
+    </script>
+
+
+
+</body></html>
